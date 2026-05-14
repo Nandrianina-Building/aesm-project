@@ -14,6 +14,8 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from functools import wraps
 from django.http import JsonResponse
+from django.http import FileResponse
+
 
 
 # =========================
@@ -304,8 +306,7 @@ def dowload_fichierView(request, fichier_id):
         id=fichier_id
     )
     fichier.download_count += 1
-    fichier.save()
-    return redirect(fichier.fichier.url)
+    fichier.save()return FileResponse(fichier.fichier.open(), as_attachment=True)
 
 
 @login_required
