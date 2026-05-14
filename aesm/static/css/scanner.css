@@ -21,7 +21,7 @@
   --radius-sm: 8px;
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.1);
-  --font-head: "Syne", sans-serif;
+  --font-head: sans-serif;
   --font-body: "DM Sans", sans-serif;
 }
 body {
