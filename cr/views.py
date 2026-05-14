@@ -3,6 +3,8 @@ from .models import Publication , Files , FileCategory , Category
 from django.core.paginator import Paginator
 from django.contrib.auth.views import redirect_to_login
 from django.db.models import F
+from django.http import FileResponse
+
 def dashboardCrView(request):
     
     categories = Category.objects.filter(
@@ -88,5 +90,4 @@ def dowload_fichierView(request, fichier_id):
     # Si l'utilisateur est actif, autoriser le téléchargement
     fichier.download_count += 1
     fichier.save()
-    
-    return redirect(fichier.fichier.url)
+    return FileResponse(fichier.fichier.open(), as_attachment=True)
