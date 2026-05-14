@@ -306,7 +306,8 @@ def dowload_fichierView(request, fichier_id):
         id=fichier_id
     )
     fichier.download_count += 1
-    fichier.save()return FileResponse(fichier.fichier.open(), as_attachment=True)
+    fichier.save()
+    return FileResponse(fichier.fichier.open(), as_attachment=True)
 
 
 @login_required
