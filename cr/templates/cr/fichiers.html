@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fichiers et Ressources — Centre de Réflexion</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/fichier_cr.css' %}" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">CR</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="badge-free"><i class="fa fa-unlock"></i> Accès gratuit</div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="#" style="color:#2d8653;border-color:#c3e6d0;">
+      <i class="fa fa-unlock"></i> Accès public et gratuit
+    </a>
+  </div>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Fichiers et Ressources</h1>
+      <p>Documents pédagogiques et ressources académiques — accès libre et gratuit</p>
+    </div>
+  </div>
+
+  <!-- ── PAGE ── -->
+  <div class="page-wrap">
+
+    <a class="back-link" href="{% url 'dashboardCr' %}">
+      <i class="fa fa-arrow-left"></i> Retour
+    </a>
+
+    <!-- Search + Filters -->
+    <div class="filter-row">
+      <div class="search-wrap">
+        <i class="fa fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Rechercher un fichier..." autocomplete="off" />
+      </div>
+
+      <!-- Desktop pills -->
+      <div class="cat-pills">
+        <button class="cat-pill active" data-id="all">Toutes</button>
+        {% for cat in categories %}
+        <button class="cat-pill" data-id="{{ cat.id }}">{{ cat.nom }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Mobile select -->
+      <div class="cat-select-wrap">
+        <select id="categorySelect">
+          <option value="all">Toutes catégories</option>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}">{{ cat.nom }}</option>
+          {% endfor %}
+        </select>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+    </div>
+
+    <!-- File list -->
+    <div id="fileContainer">
+      {% for f in fichiers %}
+      {% with nom=f.nom_fichier|lower %}
+      <div class="file-card"
+           data-name="{{ f.nom_fichier|lower }}"
+           data-desc="{{ f.contenu|lower }}"
+           data-category="{{ f.categorie.id }}">
+
+        <div class="file-icon
+          {% if '.pdf' in nom %}pdf
+          {% elif '.zip' in nom or '.rar' in nom %}zip
+          {% elif '.xlsx' in nom or '.xls' in nom or '.csv' in nom %}xlsx
+          {% elif '.pptx' in nom or '.ppt' in nom %}pptx
+          {% elif '.docx' in nom or '.doc' in nom %}docx
+          {% else %}other{% endif %}">
+          <i class="fa
+            {% if '.pdf' in nom %}fa-file-pdf
+            {% elif '.zip' in nom or '.rar' in nom %}fa-file-zipper
+            {% elif '.xlsx' in nom or '.xls' in nom or '.csv' in nom %}fa-file-excel
+            {% elif '.pptx' in nom or '.ppt' in nom %}fa-file-powerpoint
+            {% elif '.docx' in nom or '.doc' in nom %}fa-file-word
+            {% else %}fa-file{% endif %}">
+          </i>
+        </div>
+
+        <div class="file-info">
+          <div class="file-name">{{ f.nom_fichier }}</div>
+          {% if f.contenu %}
+          <div class="file-desc">{{ f.contenu }}</div>
+          {% endif %}
+          <div class="file-meta">
+            {% if f.categorie %}
+            <span class="file-badge"><i class="fa fa-tag"></i> {{ f.categorie.nom }}</span>
+            {% endif %}
+            {% if f.date_upload %}
+            <span class="file-meta-item"><i class="fa fa-calendar"></i> {{ f.date_upload|date:"d/m/Y" }}</span>
+            {% endif %}
+            {% if f.download_count %}
+            <span class="file-meta-item"><i class="fa fa-download"></i> {{ f.download_count }} téléchargements</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <a href="{% url 'download_fichier' f.id %}" class="btn-download">
+          <i class="fa fa-download"></i> Télécharger
+        </a>
+      </div>
+      {% endwith %}
+      {% empty %}
+      <div class="empty-state">
+        <i class="fa fa-folder-open"></i>
+        <p>Aucun fichier disponible pour le moment.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- No results -->
+    <div id="noResults" style="display:none;">
+      <div class="empty-state">
+        <i class="fa fa-magnifying-glass"></i>
+        <p>Aucun fichier ne correspond à votre recherche.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{% static 'js/fichier_cr.js' %}"></script>
+   
+  </script>
+</body>
+</html>

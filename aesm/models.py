@@ -47,6 +47,7 @@ class Paiement(models.Model):
         max_length=100
     )
     
+    payment_url = models.URLField(blank=True)
     def __str__(self):
         return f"Payement de {self.transaction_id}"
     
@@ -67,32 +68,92 @@ class Quitus(models.Model):
     )
     def __str__(self):
         return f"Quitus {self.paiement.transaction_id}"
-    
-   
-    
 
 class Rapport(models.Model):
+    
     titre = models.CharField(
-        max_length=200
+        max_length=200,
+    )
+    description = models.TextField(
+        blank=True, 
+        
+        null=True
     )
     date_creation = models.DateTimeField(
-        auto_now_add=True,
+        auto_now_add=True
     )
-    admin = models.ForeignKey(User, on_delete=models.CASCADE)
     
+    admin = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
     def __str__(self):
         return self.titre
+    @property
+    def total_recettes(self):
+        return sum(
+            ligne.montant
+            for ligne in self.lignes.filter(
+                type='recette'
+            )
+        )
+    @property
+    def total_depenses(self):
+        return sum(
+            ligne.montant
+            for ligne in self.lignes.filter(
+                type='depense'
+            )
+        )
+    @property
+    def solde(self):
+        return self.total_recettes - self.total_depenses
     
+class CategorieBudget(models.Model):
+    nom = models.CharField(
+        max_length=100,
+        unique=True
+    )
+    def __str__(self):
+        return self.nom
+
 class LigneBudget(models.Model):
     TYPE_CHOICES = [
-        ('recette', 'Recette'),
-        ('depense', 'Dépense'),
+        ('recette' , 'Recette'),
+        ('depense' , 'Dépense')
     ]
-
-    rapport = models.ForeignKey(Rapport, on_delete=models.CASCADE, related_name='lignes')
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
-    montant = models.IntegerField()
-    description = models.TextField()
+    rapport = models.ForeignKey(
+        Rapport,
+        on_delete=models.CASCADE,
+        related_name='lignes'
+    )
+    type = models.CharField(
+        choices=TYPE_CHOICES,
+        max_length=20
+    )
+    montant = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+    categorie = models.ForeignKey(
+        CategorieBudget,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    date_operation = models.DateTimeField(
+        auto_now_add=True
+    )
+    justificatif = models.FileField(
+        upload_to='budget/',
+        blank=True,
+        null=True
+    )
     
     def __str__(self):
-        return f"{self.type} - {self.montant}"
+        return f"{self.type.capitalize()} - {self.montant} - {self.categorie.nom if self.categorie else 'Sans catégorie'}"
+    

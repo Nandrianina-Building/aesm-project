@@ -1,0 +1,433 @@
+{% load humanize %}
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    {% include 'includes/favicon.html' %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard AESM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/dashboard_aesm.css' %}">
+    
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a class="brand" href="{% url 'home' %}">
+          <div class="brand-icon">AC</div>
+          AESM &amp; CR
+        </a>
+        <div class="nav-links">
+          <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+          <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
+          <a href="{% url 'dashboardCr' %}"
+            ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+          >
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <a href="{% url 'admin:index' %}"
+          ><i class="fa fa-shield-halved"></i> Administrateur</a
+        >
+        {% if request.user.is_authenticated %}
+        <span class="badge badge-green"
+          ><i class="fa fa-circle-check"></i> {{ user.last_name }}</span
+        >
+          
+      <a href="{% url 'account_logout' %}" class="btn btn-outline"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+        {% else %}
+        <a
+          href="{% url 'account_login' %}"
+          class="btn btn-outline"
+          style="width: auto; padding: 7px 16px"
+        >
+          <i class="fa fa-right-to-bracket"></i> Connexion
+        </a>
+        {% endif %}
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+      <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
+      <a href="{% url 'dashboardCr' %}"
+        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+      >
+      <div class="mobile-divider"></div>
+      <a href="{% url 'admin:index' %}"
+        ><i class="fa fa-shield-halved"></i> Administrateur</a
+      >
+      {% if request.user.is_authenticated %}
+       <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+      <a href="#"><i class="fa fa-circle-user"></i> {{ user.username }}</a>
+      {% else %}
+      <a href="{% url 'account_login' %}"
+        ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+      {% endif %}
+    </div>
+
+    <!-- ── HERO ── -->
+    <div class="hero">
+      <div class="hero-content">
+        <h1>AESM Dashboard</h1>
+        <p>Association des Etudiants Sociologie Madagascar</p>
+      </div>
+    </div>
+
+    <!-- ── MAIN WRAPPER ── -->
+    <div class="main-wrapper">
+      <!-- Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="stat-card-label">Membres actifs</span>
+            <span class="stat-card-value">{{ count_actif }}</span>
+          </div>
+          <div class="stat-icon blue"><i class="fa fa-users"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="stat-card-label">Publications</span>
+            <span class="stat-card-value">{{ count_pub }}</span>
+          </div>
+          <div class="stat-icon green"><i class="fa fa-file-lines"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="stat-card-label">Fichiers</span>
+            <span class="stat-card-value">{{ count_file }}</span>
+          </div>
+          <div class="stat-icon purple"><i class="fa fa-folder-open"></i></div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-info">
+            <span class="stat-card-label">Événements</span>
+            <span class="stat-card-value">{{ count_evenement }}</span>
+          </div>
+          <div class="stat-icon orange">
+            <i class="fa fa-calendar-days"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-cat="apercu">Aperçu</button>
+        <button class="tab-btn" data-cat="account">Mon compte</button>
+        <button class="tab-btn" data-cat="publications">Publications</button>
+        <button class="tab-btn" data-cat="fichiers">Fichiers</button>
+        <button class="tab-btn" data-cat="budget">Budget</button>
+      </div>
+
+      <!-- ── APERÇU ── -->
+      <div class="section apercu active">
+        <div class="content-grid">
+          <!-- FAQ / Instructions -->
+          <div class="content-card">
+            <h2>
+              <i
+                class="fa fa-circle-info"
+                style="color: var(--blue-mid); margin-right: 8px"
+              ></i
+              >Guide de la plateforme
+            </h2>
+            <p>
+              Les questions fréquentes et les guides d'utilisation de cette
+              plateforme.
+            </p>
+            <a href="{% url 'instructions_faq' %}" class="btn btn-outline">
+              <i class="fa fa-book"></i> En savoir plus
+            </a>
+          </div>
+
+          <!-- Ressources -->
+          <div class="content-card">
+            <h2>
+              <i
+                class="fa fa-folder-open"
+                style="color: #9333ea; margin-right: 8px"
+              ></i
+              >Ressources
+            </h2>
+            <p>Documents et fichiers téléchargeables pour les membres.</p>
+            {% if etat == 'actif' %}
+            <a href="{% url 'list_fichier_aesm' %}" class="btn btn-outline">
+              <i class="fa fa-download"></i> Accéder aux fichiers
+            </a>
+            {% else %}
+            <a href="{% url 'payement_adhesion' %}" class="btn btn-primary">
+              <i class="fa fa-credit-card"></i> Adhérer à l'association
+            </a>
+            {% endif %}
+          </div>
+
+          <!-- Publications récentes -->
+          <div class="content-card full">
+            <h2>
+              <i
+                class="fa fa-newspaper"
+                style="color: #16a34a; margin-right: 8px"
+              ></i
+              >Publications récentes
+            </h2>
+            <p>Dernières annonces et événements de l'association.</p>
+            <div class="pub-list">
+              {% for pub in publication %}
+              <div class="pub-item">
+                <div class="pub-item-info">
+                  <h3>{{ pub.titre }}</h3>
+                  <p>
+                    {% if pub.date_publication|timesince == '0 minute' %} À
+                    l'instant {% else %} Il y a {{pub.date_publication|timesince }} {% endif %}
+                  </p>
+                </div>
+                <a
+                  href="{% url 'publication_detail_aesm' pub.pk %}"
+                  class="btn-sm"
+                >
+                  Lire <i class="fa fa-arrow-right"></i>
+                </a>
+              </div>
+              {% empty %}
+              <div class="empty-state">
+                <i class="fa fa-newspaper"></i>
+                <p>Aucune publication pour le moment.</p>
+              </div>
+              {% endfor %}
+            </div>
+            <a href="{% url 'publication_easm' %}" class="view-all">
+              Voir toutes les publications <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MON COMPTE ── -->
+      <div class="section account">
+        <div class="content-grid">
+          <div class="content-card full">
+            <h2>
+              <i
+                class="fa fa-circle-user"
+                style="color: var(--blue-mid); margin-right: 8px"
+              ></i
+              >Mon compte
+            </h2>
+
+            {% if etat == 'visiteur' %}
+            <div class="empty-state">
+              <i class="fa fa-lock"></i>
+              <p>
+                Veuillez vous connecter pour accéder aux fonctionnalités
+                réservées aux membres.
+              </p>
+              <a
+                href="{% url 'account_login' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-right-to-bracket"></i> Se connecter
+              </a>
+            </div>
+
+            {% elif etat == 'en_attente' %}
+            <div class="empty-state">
+              <i class="fa fa-clock"></i>
+              <p>
+                Vous êtes inscrit mais votre adhésion n'est pas encore active.
+              </p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-credit-card"></i> Payer maintenant
+              </a>
+            </div>
+
+            {% elif etat == 'actif' %}
+            <p style="margin-bottom: 16px">
+              <span class="badge badge-green"
+                ><i class="fa fa-circle-check"></i> Membre actif</span
+              >
+            </p>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="label">Nom</div>
+                <div class="value">{{ user.first_name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Prénom</div>
+                <div class="value">{{ user.last_name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Email</div>
+                <div class="value">{{ user.email }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Matricule</div>
+                <div class="value">{{ etudiant.matricule }}</div>
+              </div>
+            </div>
+
+            {% if quitus %}
+            <div class="payment-card">
+              <h3>
+                <i class="fa fa-receipt"></i> Informations sur votre paiement
+              </h3>
+              <div class="payment-grid">
+                <div class="payment-field">
+                  <div class="label">Transaction ID</div>
+                  <div class="value">{{ quitus.paiement.transaction_id }}</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Montant</div>
+                  <div class="value">{{ quitus.paiement.montant }} Ariary</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Statut</div>
+                  <div class="value">{{ quitus.paiement.statut }}</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Date de paiement</div>
+                  <div class="value">{{ quitus.paiement.date_payement }}</div>
+                </div>
+              </div>
+              <a
+                href="{{ quitus.fichier_pdf.url }}"
+                download
+                class="btn-download"
+              >
+                <i class="fa fa-file-pdf"></i> Télécharger votre quitus
+              </a>
+            </div>
+            {% endif %} {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PUBLICATIONS ── -->
+      <div class="section publications">
+        <div class="content-grid">
+          <div class="content-card full">
+            <h2>
+              <i
+                class="fa fa-newspaper"
+                style="color: #16a34a; margin-right: 8px"
+              ></i
+              >Publications
+            </h2>
+            <p>Consultez les dernières publications de l'association.</p>
+            <a
+              href="{% url 'publication_easm' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-arrow-right"></i> Voir toutes les publications
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FICHIERS ── -->
+      <div class="section fichiers">
+        <div class="content-grid">
+          <div class="content-card full">
+            <h2>
+              <i
+                class="fa fa-folder-open"
+                style="color: #9333ea; margin-right: 8px"
+              ></i
+              >Fichiers
+            </h2>
+            <p>
+              Accédez aux fichiers partagés par les membres de l'association.
+            </p>
+            {% if etat == 'actif' %}
+            <a
+              href="{% url 'list_fichier_aesm' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-download"></i> Voir les fichiers
+            </a>
+            {% else %}
+             <p>Vous n'avez pas encore accès aux fichiers.</p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-credit-card"></i> Adhérer à l'association
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BUDGET ── -->
+      <div class="section budget">
+        <div class="content-grid">
+          <div class="content-card full">
+            <h2>
+              <i
+                class="fa fa-chart-pie"
+                style="color: #ea6e0e; margin-right: 8px"
+              ></i
+              >Budget
+            </h2>
+            <p>Visualisez les informations financières de l'association.</p>
+            {% if etat == 'actif' %}
+            <a
+              href="{% url 'dashboard_budget' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-chart-bar"></i> Voir le dashboard budget
+            </a>
+            {% else %}
+            <div class="empty-state">
+              <i class="fa fa-lock"></i>
+              <p>
+                Veuillez adhérer à l'association pour accéder au dashboard
+                budget.
+              </p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-credit-card"></i> Payer maintenant
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /main-wrapper -->
+
+    <script src="{% static 'js/dashboard_aesm.js' %}"></script>
+  </body>
+</html>

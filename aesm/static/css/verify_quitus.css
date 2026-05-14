@@ -1,0 +1,336 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --blue-dark: #1a1fa8;
+  --blue-mid: #2d35c9;
+  --accent: #6c6fff;
+  --white: #ffffff;
+  --bg: #f4f5f9;
+  --card-bg: #ffffff;
+  --text-primary: #0f1117;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --border: #e5e7eb;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --green-border: #bbf7d0;
+  --shadow-md: 0 4px 28px rgba(0, 0, 0, 0.1);
+  --font-head: "Syne", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+}
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  /* subtle dot grid */
+  background-image: radial-gradient(
+    rgba(45, 53, 201, 0.06) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  animation: cardIn 0.32s ease;
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── TOP BAR — scanner à nouveau ── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.top-bar-left i {
+  color: var(--text-light);
+}
+.btn-scan-again {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--blue-dark);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-scan-again:hover {
+  background: var(--blue-mid);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(29, 42, 200, 0.25);
+}
+.btn-scan-again i {
+  font-size: 14px;
+}
+
+/* ── VALID BANNER ── */
+.valid-banner {
+  background: var(--green-bg);
+  border-bottom: 1px solid var(--green-border);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.valid-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  background: white;
+  border: 2px solid var(--green-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* SVG check animé */
+.valid-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.ring-circle {
+  stroke: var(--green);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+  animation: drawC 0.5s ease forwards;
+  transform-origin: center;
+  transform: rotate(-90deg);
+}
+.ring-check {
+  stroke: var(--green);
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 38;
+  stroke-dashoffset: 38;
+  animation: drawK 0.3s ease 0.45s forwards;
+}
+@keyframes drawC {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes drawK {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.valid-text h2 {
+  font-family: var(--font-head);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green);
+  margin-bottom: 3px;
+}
+.valid-text p {
+  font-size: 13px;
+  color: #166534;
+}
+
+/* ── BODY ── */
+.card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Section label */
+.sect-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+.sect-label i {
+  font-size: 11px;
+}
+.sect-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Info rows */
+.info-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.info-row:last-child {
+  border-bottom: none;
+}
+.info-row:hover {
+  background: #fafafa;
+}
+
+.row-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+.row-icon.blue {
+  background: #e8eaff;
+  color: var(--blue-mid);
+}
+.row-icon.green {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.row-icon.purple {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+.row-icon.orange {
+  background: #fff3e6;
+  color: #ea6e0e;
+}
+
+.row-content {
+  flex: 1;
+  min-width: 0;
+}
+.row-label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.row-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+/* Statut pill */
+.pill-valid {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+
+/* ── FOOTER ── */
+.card-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.btn-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-dashboard:hover {
+  background: var(--white);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  body {
+    align-items: flex-start;
+    padding: 16px 12px 40px;
+  }
+  .card-body {
+    padding: 18px;
+    gap: 14px;
+  }
+  .valid-banner {
+    padding: 16px 18px;
+    gap: 12px;
+  }
+  .top-bar {
+    padding: 12px 16px;
+  }
+}

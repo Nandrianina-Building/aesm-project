@@ -1,0 +1,189 @@
+{% load static %}
+{% load humanize %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Publications AESM</title>
+    {% include 'includes/favicon.html' %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/publication.css' %}">
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a class="brand" href="{% url 'home' %}">
+          <div class="brand-icon">AC</div>
+          AESM &amp; CR
+        </a>
+        <div class="nav-links">
+          <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+          <a href="{% url 'dashboardAesm' %}" class="active"
+            ><i class="fa fa-users"></i> AESM</a
+          >
+          <a href="{% url 'dashboardCr' %}"
+            ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+          >
+        </div>
+      </div>
+      <div class="navbar-right">
+        <a href="{% url 'admin:index' %}"
+          ><i class="fa fa-shield-halved"></i> Administrateur</a
+        >
+        {% if request.user.is_authenticated %}
+        <button class="btn-logout">
+          <i class="fa fa-right-from-bracket"></i> Déconnexion
+        </button>
+        {% else %}
+        <a href="{% url 'account_login' %}" class="btn-logout">
+          <i class="fa fa-right-to-bracket"></i> Connexion
+        </a>
+        {% endif %}
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+      <a href="{% url 'dashboardAesm' %}" class="active"
+        ><i class="fa fa-users"></i> AESM</a
+      >
+      <a href="{% url 'dashboardCr' %}"
+        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+      >
+      <div class="mobile-divider"></div>
+      <a href="{% url 'admin:index' %}"
+        ><i class="fa fa-shield-halved"></i> Administrateur</a
+      >
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'account_logout' %}"
+        ><i class="fa fa-right-from-bracket"></i> Déconnexion</a
+      >
+      {% else %}
+      <a href="{% url 'account_login' %}"
+        ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+      {% endif %}
+    </div>
+
+    <!-- ── PAGE CONTENT ── -->
+    <div class="page-wrap">
+      <a class="back-link" href="javascript:history.back()">
+        <i class="fa fa-arrow-left"></i> Retour
+      </a>
+
+      <div class="page-title">
+        <h1>Publications AESM</h1>
+        <p>Actualités, événements et annonces de l'association</p>
+      </div>
+
+      <!-- Search + Category filter -->
+      <div class="search-bar">
+        <div class="search-wrap">
+          <i class="fa fa-magnifying-glass"></i>
+          <input
+            type="text"
+            id="search"
+            placeholder="Rechercher une publication..."
+            autocomplete="off"
+          />
+        </div>
+        <div class="cat-select-wrap">
+          <select class="cat-select" id="catSelect">
+            <option value="all">Toutes</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+          <i class="fa fa-chevron-down"></i>
+        </div>
+      </div>
+
+      <!-- Category pills -->
+      <div class="cat-pills">
+        <button class="cat-pill active" data-id="all">Toutes</button>
+        {% for cat in categories %}
+        <button class="cat-pill" data-id="{{ cat.id }}">{{ cat.name }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Publications list -->
+      <div id="pub-list">
+        {% for pub in publications %}
+        <div
+          class="pub-item"
+          data-title="{{ pub.titre|lower }}"
+          data-content="{{ pub.contenu|lower }}"
+          data-category="{{ pub.categorie.id }}"
+        >
+          <div class="pub-img">
+            {% if pub.image %}
+            <img
+              src="{{ pub.image.url }}"
+              alt="{{ pub.titre }}"
+              loading="lazy"
+            />
+            {% else %}
+            <div class="pub-img-placeholder">
+              <i class="fa fa-newspaper"></i>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="pub-body">
+            <div class="pub-badge">
+              <i class="fa fa-tag"></i> {{ pub.categorie.name }}
+            </div>
+            <div class="pub-title">{{ pub.titre }}</div>
+            <div class="pub-meta">
+              <span
+                ><i class="fa fa-calendar"></i> {{pub.date_publication|date:"d/m/Y" }}</span
+              >
+              {% if pub.auteur %}
+              <span><i class="fa fa-user"></i> {{ pub.auteur }}</span>
+              {% endif %}
+            </div>
+            <p class="pub-excerpt">{{ pub.contenu|truncatewords:20 }}</p>
+            <a
+              href="{% url 'publication_detail_aesm' pub.id %}"
+              class="btn-read"
+            >
+              Lire la suite <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+          <i class="fa fa-newspaper"></i>
+          <p>Aucune publication pour le moment.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- No results message (hidden by default) -->
+      <div id="no-results" style="display: none">
+        <div class="empty-state">
+          <i class="fa fa-magnifying-glass"></i>
+          <p>Aucune publication ne correspond à votre recherche.</p>
+        </div>
+      </div>
+    </div>
+    <!-- /page-wrap -->
+  
+    <script src="{% static 'js/publication.js' %}"></script>
+  </body>
+</html>

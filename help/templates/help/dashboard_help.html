@@ -1,0 +1,384 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aide & FAQ — AESM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/help.css' %}">
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <a class="brand" href="{% url 'home' %}">
+          <div class="brand-icon">AC</div>
+          AESM &amp; CR
+        </a>
+        <div class="nav-links">
+          <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+          <a href="{% url 'dashboardAesm' %}" class="active"
+            ><i class="fa fa-users"></i> AESM</a
+          >
+          <a href="{% url 'dashboardCr' %}"
+            ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+          >
+        </div>
+      </div>
+      <div class="navbar-right">
+        <a href="{% url 'admin:index' %}"
+          ><i class="fa fa-shield-halved"></i> Administrateur</a
+        >
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'account_logout' %}" class="btn-nav">
+          <i class="fa fa-right-from-bracket"></i> Déconnexion
+        </a>
+        {% else %}
+        <a href="{% url 'account_login' %}" class="btn-nav">
+          <i class="fa fa-right-to-bracket"></i> Connexion
+        </a>
+        {% endif %}
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+      <a href="{% url 'dashboardAesm' %}" class="active"
+        ><i class="fa fa-users"></i> AESM</a
+      >
+      <a href="{% url 'dashboardCr' %}"
+        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+      >
+      <div class="mobile-divider"></div>
+      <a href="{% url 'admin:index' %}"
+        ><i class="fa fa-shield-halved"></i> Administrateur</a
+      >
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'account_logout' %}"
+        ><i class="fa fa-right-from-bracket"></i> Déconnexion</a
+      >
+      {% else %}
+      <a href="{% url 'account_login' %}"
+        ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+      {% endif %}
+    </div>
+
+    <!-- ── PAGE ── -->
+    <div class="page-wrap">
+      <a class="back-link" href="javascript:history.back()">
+        <i class="fa fa-arrow-left"></i> Retour
+      </a>
+
+      <div class="page-title">
+        <h1>Support / Aide / FAQ</h1>
+        <p>Association des Étudiants en Sociologie de Madagascar</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-cat="instruction">
+          <i class="fa fa-book"></i> Instructions
+        </button>
+        <button class="tab-btn" data-cat="faq">
+          <i class="fa fa-circle-question"></i> Foire aux questions
+        </button>
+      </div>
+
+      <!-- ── INSTRUCTIONS SECTION ── -->
+      <div class="section instruction active">
+        <div class="guide-intro">
+          <h2>
+            <i class="fa fa-map" style="margin-right: 8px; opacity: 0.85"></i
+            >Guide complet d'utilisation
+          </h2>
+          <p>
+            Ce guide vous explique pas à pas comment utiliser la plateforme AESM
+            depuis votre compte étudiant.
+          </p>
+        </div>
+
+        <div class="steps-list">
+          <!-- Step 1 -->
+          <div class="step-card open">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title-wrap">
+                <h3>Création et connexion du compte</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                Avant toute utilisation, vous devez disposer d'un compte
+                étudiant.
+              </p>
+              <ul>
+                <li>Accédez à la page de connexion.</li>
+                <li>
+                  Entrez votre email et mot de passe fourni lors de
+                  l'inscription.
+                </li>
+                <li>
+                  Si vous n'avez pas de compte, utilisez la page d'inscription.
+                </li>
+              </ul>
+              <p>
+                Une fois connecté, vous serez redirigé vers votre tableau de
+                bord étudiant.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title-wrap">
+                <h3>Compléter votre profil étudiant</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                Après la création du compte, vous devez vérifier vos
+                informations personnelles.
+              </p>
+              <ul>
+                <li>Nom et prénom</li>
+                <li>Matricule étudiant</li>
+                <li>Filière</li>
+              </ul>
+              <p>
+                Ces informations sont obligatoires pour valider votre adhésion à
+                AESM.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title-wrap">
+                <h3>Inscription à l'association</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                L'inscription est obligatoire pour devenir membre officiel AESM.
+              </p>
+              <ul>
+                <li>Votre statut initial est : <strong>En attente</strong></li>
+                <li>Vous devez effectuer le paiement d'adhésion</li>
+                <li>
+                  Une fois validé, votre statut devient : <strong>Payé</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title-wrap">
+                <h3>Paiement d'adhésion</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                Le montant de l'adhésion est fixe et obligatoire pour tous les
+                membres.
+              </p>
+              <ul>
+                <li>Montant : <strong>2 000 Ar</strong></li>
+                <li>Paiement via la plateforme intégrée</li>
+                <li>En cas de succès, un quitus est généré automatiquement</li>
+              </ul>
+              <p>
+                Attention : sans paiement validé, vous ne pouvez pas accéder aux
+                fonctionnalités membres.
+              </p>
+              <div class="step-badge">
+                <i class="fa fa-circle-exclamation"></i> Étape obligatoire
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">5</div>
+              <div class="step-title-wrap">
+                <h3>Quitus et validation membre</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                Après paiement réussi, un quitus est généré automatiquement.
+              </p>
+              <ul>
+                <li>Un QR Code est inclus dans le quitus</li>
+                <li>Un fichier PDF téléchargeable est généré</li>
+                <li>Ce document prouve votre statut de membre AESM</li>
+              </ul>
+              <p>
+                Le quitus peut être vérifié par l'administration à tout moment.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">6</div>
+              <div class="step-title-wrap">
+                <h3>Accès aux publications</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>
+                Une fois membre, vous pouvez accéder aux publications
+                officielles.
+              </p>
+              <ul>
+                <li>Conférences académiques</li>
+                <li>Événements AESM</li>
+                <li>Informations administratives</li>
+              </ul>
+              <p>
+                Certaines publications peuvent être limitées selon votre statut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 7 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">7</div>
+              <div class="step-title-wrap">
+                <h3>Téléchargement de fichiers</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>L'administration peut partager des documents pédagogiques.</p>
+              <ul>
+                <li>Cours</li>
+                <li>Supports de formation</li>
+                <li>Documents officiels AESM</li>
+              </ul>
+              <p>
+                Ces fichiers sont accessibles directement depuis votre tableau
+                de bord.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 8 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">8</div>
+              <div class="step-title-wrap">
+                <h3>Consultation du budget AESM</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>La plateforme permet une transparence financière complète.</p>
+              <ul>
+                <li>Recettes (cotisations, dons)</li>
+                <li>Dépenses (événements, logistique)</li>
+                <li>Solde global de l'association</li>
+              </ul>
+              <p>Les données sont mises à jour par les administrateurs.</p>
+            </div>
+          </div>
+
+          <!-- Step 9 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-num">9</div>
+              <div class="step-title-wrap">
+                <h3>Support et FAQ</h3>
+              </div>
+              <i class="fa fa-chevron-down step-chevron"></i>
+            </div>
+            <div class="step-body">
+              <p>En cas de problème :</p>
+              <ul>
+                <li>Consultez la FAQ</li>
+                <li>Contactez l'administration AESM</li>
+              </ul>
+              <p>
+                L'équipe est disponible pour toute assistance technique ou
+                administrative.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- /steps-list -->
+
+        <div class="guide-footer">
+          <i class="fa fa-circle-info"></i>
+          <p>
+            <strong>AESM</strong> — Plateforme officielle des étudiants en
+            sociologie de Madagascar.
+          </p>
+        </div>
+      </div>
+      <!-- /section instruction -->
+
+      <!-- ── FAQ SECTION ── -->
+      <div class="section faq">
+        <div class="faq-list">
+          {% for f in faqs %}
+          <div class="faq-item">
+            <div class="faq-question">
+              <div class="faq-q-icon"><i class="fa fa-question"></i></div>
+              <div class="faq-q-text">{{ f.question }}</div>
+              <i class="fa fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer">
+              <p>{{ f.reponse }}</p>
+              {% if f.categorie %}
+              <div class="faq-cat">
+                <i class="fa fa-tag"></i> {{ f.categorie }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="fa fa-circle-question"></i>
+            <p>Aucune FAQ disponible pour le moment.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <!-- /section faq -->
+    </div>
+    <!-- /page-wrap -->
+
+    <script src="{% static 'js/help.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+{% for f in fichiers %}
+{% with ext=f.nom_fichier|lower %}
+<div class="file-card"
+     data-name="{{ f.nom_fichier|lower }}"
+     data-desc="{{ f.contenu|lower }}"
+     data-category="{{ f.categorie.id }}">
+
+  <div class="file-icon
+    {% if '.pdf' in ext %}pdf
+    {% elif '.zip' in ext or '.rar' in ext %}zip
+    {% elif '.xlsx' in ext or '.xls' in ext or '.csv' in ext %}xlsx
+    {% elif '.pptx' in ext or '.ppt' in ext %}pptx
+    {% elif '.docx' in ext or '.doc' in ext %}docx
+    {% else %}other{% endif %}">
+    <i class="fa
+      {% if '.pdf' in ext %}fa-file-pdf
+      {% elif '.zip' in ext or '.rar' in ext %}fa-file-zipper
+      {% elif '.xlsx' in ext or '.xls' in ext or '.csv' in ext %}fa-file-excel
+      {% elif '.pptx' in ext or '.ppt' in ext %}fa-file-powerpoint
+      {% elif '.docx' in ext or '.doc' in ext %}fa-file-word
+      {% else %}fa-file{% endif %}">
+    </i>
+  </div>
+
+  <div class="file-info">
+    <div class="file-name">{{ f.nom_fichier }}</div>
+    {% if f.contenu %}
+    <div class="file-desc">{{ f.contenu }}</div>
+    {% endif %}
+    <div class="file-meta">
+      <span class="file-badge"><i class="fa fa-tag"></i> {{ f.categorie.nom }}</span>
+      {% if f.taille %}
+      <span class="file-meta-item"><i class="fa fa-weight-hanging"></i> {{ f.taille }}</span>
+      {% endif %}
+      {% if f.date_upload %}
+      <span class="file-meta-item"><i class="fa fa-calendar"></i> {{ f.date_upload|date:"d/m/Y" }}</span>
+      {% endif %}
+      {% if f.download_count %}
+      <span class="file-meta-item"><i class="fa fa-download"></i> {{ f.download_count }} téléchargements</span>
+      {% endif %}
+      {% if f.membres_uniquement %}
+      <span class="badge-members"><i class="fa fa-lock"></i> Membres uniquement</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <a href="{% url 'download_fichier' f.id %}" class="btn-download">
+    <i class="fa fa-download"></i> Télécharger
+  </a>
+</div>
+{% endwith %}
+{% empty %}
+<div class="empty-state">
+  <i class="fa fa-folder-open"></i>
+  <p>Aucun fichier disponible pour le moment.</p>
+</div>
+{% endfor %}

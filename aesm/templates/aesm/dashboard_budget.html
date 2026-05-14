@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% include 'includes/favicon.html' %}
+  <title>Rapports budgétaires AESM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{% static 'css/dashboard_budget.css' %}" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'account_logout' %}" class="btn-nav">
+        <i class="fa fa-right-from-bracket"></i> Déconnexion
+      </a>
+      {% else %}
+      <a href="{% url 'account_login' %}" class="btn-nav">
+        <i class="fa fa-right-to-bracket"></i> Connexion
+      </a>
+      {% endif %}
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+    {% else %}
+    <a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a>
+    {% endif %}
+  </div>
+
+  <!-- ── PAGE ── -->
+  <div class="page-wrap">
+
+    <a class="back-link" href="javascript:history.back()">
+      <i class="fa fa-arrow-left"></i> Retour
+    </a>
+
+    <div class="page-title">
+      <h1>Rapports budgétaires AESM</h1>
+      <p>Gestion financière et analyse des flux de trésorerie</p>
+    </div>
+
+    <!-- ── STAT CARDS ── -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total Recettes</div>
+          <div class="stat-value">{{ total_recettes|floatformat:0 }} Ar</div>
+        </div>
+        <div class="stat-icon green"><i class="fa fa-arrow-trend-up"></i></div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total Dépenses</div>
+          <div class="stat-value">{{ total_depenses|floatformat:0 }} Ar</div>
+        </div>
+        <div class="stat-icon red"><i class="fa fa-arrow-trend-down"></i></div>
+      </div>
+      
+    </div>
+
+    <!-- ── ACTION BUTTONS ── -->
+    <div class="action-row">
+      <button class="btn-action btn-primary-dark" onclick="window.print()">
+        <i class="fa fa-file-pdf"></i> Exporter PDF
+      </button>
+      
+    </div>
+
+    <!-- ── TABS ── -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-cat="overview"><i class="fa fa-chart-pie"></i> Vue d'ensemble</button>
+      <button class="tab-btn" data-cat="transactions"><i class="fa fa-list"></i> Transactions</button>
+      <button class="tab-btn" data-cat="analyse"><i class="fa fa-magnifying-glass-chart"></i> Analyse</button>
+    </div>
+
+    <!-- ══ VUE D'ENSEMBLE ══ -->
+    <div class="section overview active">
+      <div class="charts-grid">
+
+        <!-- Évolution mensuelle -->
+        <div class="chart-card">
+          <h3>Évolution mensuelle</h3>
+          <p>Recettes vs Dépenses (2026)</p>
+          <div class="chart-wrap">
+            <canvas id="chartEvolution"></canvas>
+          </div>
+        </div>
+
+        <!-- Répartition recettes -->
+        <div class="chart-card">
+          <h3>Répartition des recettes</h3>
+          <p>Par catégorie</p>
+          <div class="chart-wrap-pie">
+            <canvas id="chartRecettes"></canvas>
+          </div>
+        </div>
+
+        <!-- Répartition dépenses -->
+        <div class="chart-card">
+          <h3>Répartition des dépenses</h3>
+          <p>Par catégorie</p>
+          <div class="chart-wrap-pie">
+            <canvas id="chartDepenses"></canvas>
+          </div>
+        </div>
+
+        <!-- Tendance du solde -->
+        <div class="chart-card">
+          <h3>Tendance du solde</h3>
+          <p>Évolution cumulée</p>
+          <div class="chart-wrap">
+            <canvas id="chartSolde"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ TRANSACTIONS ══ -->
+    <div class="section transactions">
+      <div class="table-card">
+        <div class="table-head">
+          <h3><i class="fa fa-list" style="margin-right:8px;color:var(--blue-mid);"></i>Historique des transactions</h3>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Catégorie</th>
+                <th>Description</th>
+                <th>Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaction in transactions %}
+              <tr>
+                <td>{{ transaction.date_operation|date:"d/m/Y" }}</td>
+                <td>
+                  <span class="td-type {% if transaction.type == 'recette' %}recette{% else %}depense{% endif %}">
+                    <i class="fa {% if transaction.type == 'recette' %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                    {{ transaction.type|capfirst }}
+                  </span>
+                </td>
+                <td>{{ transaction.categorie.nom }}</td>
+                <td>{{ transaction.description }}</td>
+                <td class="td-amount {% if transaction.type == 'recette' %}recette{% else %}depense{% endif %}">
+                  {% if transaction.type == 'recette' %}+{% else %}-{% endif %}{{ transaction.montant }} Ar
+                </td>
+              </tr>
+              {% empty %}
+              <tr class="empty-row">
+                <td colspan="5">
+                  <i class="fa fa-inbox" style="font-size:28px;margin-bottom:8px;display:block;opacity:.4;"></i>
+                  Aucune transaction disponible.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYSE ══ -->
+    <div class="section analyse">
+      <div class="analyse-grid">
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#dcfce7;color:#16a34a;"><i class="fa fa-arrow-trend-up"></i></div>
+          <div class="a-label">Total Recettes</div>
+          <div class="a-value">{{ total_recettes|floatformat:0 }} Ar</div>
+        </div>
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#fee2e2;color:#dc2626;"><i class="fa fa-arrow-trend-down"></i></div>
+          <div class="a-label">Total Dépenses</div>
+          <div class="a-value">{{ total_depenses|floatformat:0 }} Ar</div>
+        </div>
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#e8eaff;color:var(--blue-mid);"><i class="fa fa-piggy-bank"></i></div>
+          <div class="a-label">Taux d'épargne</div>
+          <div class="a-value">{{ taux_epargne|floatformat:2 }} %</div>
+        </div>
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#fef3c7;color:#d97706;"><i class="fa fa-calendar-check"></i></div>
+          <div class="a-label">Recette moy./mois</div>
+          <div class="a-value">{{ recette_moyenne|floatformat:0 }} Ar</div>
+        </div>
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#ffedd5;color:#ea6e0e;"><i class="fa fa-calendar-minus"></i></div>
+          <div class="a-label">Dépense moy./mois</div>
+          <div class="a-value">{{ depense_moyenne|floatformat:0 }} Ar</div>
+        </div>
+
+        <div class="analyse-card">
+          <div class="a-icon" style="background:#f3e8ff;color:#9333ea;"><i class="fa fa-percent"></i></div>
+          <div class="a-label">Ratio dépenses</div>
+          <div class="a-value">{{ ratio_depense|floatformat:2 }} %</div>
+        </div>
+
+      </div>
+
+      <!-- Recommendation -->
+      <div class="reco-card">
+        <h3><i class="fa fa-lightbulb"></i> Recommandation</h3>
+        <p>{{ recommendation }}</p>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- ── DATA FROM DJANGO ── -->
+  {{ recettes_categories|json_script:"recettes-data" }}
+  {{ depenses_categories|json_script:"depenses-data" }}
+
+  <script src="{% static 'js/dashboard_budget.js' %}"></script>
+</body>
+</html>

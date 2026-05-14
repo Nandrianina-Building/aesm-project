@@ -1,0 +1,131 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement Adhésion — AESM</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/paiement.css' %}" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'account_logout' %}" class="btn-nav">
+        <i class="fa fa-right-from-bracket"></i> Déconnexion
+      </a>
+      {% else %}
+      <a href="{% url 'account_login' %}" class="btn-nav">
+        <i class="fa fa-right-to-bracket"></i> Connexion
+      </a>
+      {% endif %}
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+    {% else %}
+    <a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a>
+    {% endif %}
+  </div>
+
+  <!-- ── PAYMENT CARD ── -->
+  <div class="page-wrap">
+    <div class="payment-card">
+
+      <div class="payment-header">
+        <div class="header-icon"><i class="fa fa-credit-card"></i></div>
+        <h1>Paiement d'adhésion AESM</h1>
+        <p>Devenez membre officiel de l'association</p>
+      </div>
+
+      <div class="payment-body">
+
+        <!-- Amount -->
+        <div class="amount-display">
+          <div>
+            <div class="amount-label">Montant de l'adhésion</div>
+            <div class="amount-value">2 000 Ar</div>
+          </div>
+          <div class="amount-icon"><i class="fa fa-tag"></i></div>
+        </div>
+
+        <!-- What you get -->
+        <ul class="benefits-list">
+          <li>
+            <div class="benefit-check"><i class="fa fa-check"></i></div>
+            Accès aux publications et ressources membres
+          </li>
+          <li>
+            <div class="benefit-check"><i class="fa fa-check"></i></div>
+            Quitus numérique avec QR Code téléchargeable
+          </li>
+          <li>
+            <div class="benefit-check"><i class="fa fa-check"></i></div>
+            Consultation du budget et rapports financiers
+          </li>
+          <li>
+            <div class="benefit-check"><i class="fa fa-check"></i></div>
+            Participation aux événements officiels AESM
+          </li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <!-- Form -->
+        <form action="" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn-pay">
+            <i class="fa fa-lock"></i> Payer maintenant — 2 000 Ar
+          </button>
+        </form>
+
+        <div class="security-note">
+          <i class="fa fa-shield-halved"></i>
+          Paiement sécurisé via la plateforme AESM
+        </div>
+
+      </div>
+
+      <div class="payment-foot">
+        <a class="back-foot" href="{% url 'dashboardAesm' %}">
+          <i class="fa fa-arrow-left"></i> Retour au tableau de bord
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/paiement.js' %}"></script>
+</body>
+</html>

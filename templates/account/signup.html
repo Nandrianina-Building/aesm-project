@@ -1,0 +1,200 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription — AESM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a class="brand" href="{% url 'dashboardAesm' %}">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </a>
+      <a class="back-link" href="{% url 'dashboardAesm' %}">
+        <i class="fa fa-arrow-left"></i> Retour
+      </a>
+    </nav>
+
+    <div class="page-wrap">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-icon"><i class="fa fa-user-plus"></i></div>
+          <h1>Rejoignez-nous</h1>
+          <p>Créez votre compte pour accéder à l'espace membre AESM.</p>
+        </div>
+
+        <div class="auth-body">
+          {% if form.non_field_errors %}
+          <div class="error-banner">
+            <i class="fa fa-circle-exclamation"></i>
+            <span>{{ form.non_field_errors }}</span>
+          </div>
+          {% endif %}
+
+          <form
+            action="{% url 'account_signup' %}"
+            method="post"
+            id="signupForm"
+            novalidate
+          >
+            {% csrf_token %}
+
+            <div class="section-divider">
+              <span>Informations personnelles</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nom <span>*</span></label>
+                <div class="input-wrap">
+                  <i class="fa fa-user"></i>
+                  {{ form.first_name }}
+                </div>
+                {% if form.first_name.errors %}
+                <div class="field-error">
+                  <i class="fa fa-circle-xmark"></i> {{
+                  form.first_name.errors|join:", " }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="form-group">
+                <label>Prénom <span>*</span></label>
+                <div class="input-wrap">
+                  <i class="fa fa-user"></i>
+                  {{ form.last_name }}
+                </div>
+                {% if form.last_name.errors %}
+                <div class="field-error">
+                  <i class="fa fa-circle-xmark"></i> {{
+                  form.last_name.errors|join:", " }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Matricule unique <span>*</span></label>
+              <div class="hint">
+                <i class="fa fa-circle-info"></i>
+                Vous avez déjà votre matricule chez l'association, veuillez le
+                saisir ici.
+              </div>
+              <div class="input-wrap">
+                <i class="fa fa-id-card"></i>
+                {{ form.matricule }}
+              </div>
+              {% if form.matricule.errors %}
+              <div class="field-error">
+                <i class="fa fa-circle-xmark"></i> {{form.matricule.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="section-divider">
+              <span>Compte &amp; sécurité</span>
+            </div>
+
+            <div class="form-group">
+              <label>Email <span>*</span></label>
+              <div class="input-wrap">
+                <i class="fa fa-envelope"></i>
+                {{ form.email }}
+              </div>
+              {% if form.email.errors %}
+              <div class="field-error">
+                <i class="fa fa-circle-xmark"></i> {{ form.email.errors|join:",
+                " }}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Mot de passe <span>*</span></label>
+                <div class="input-wrap">
+                  <i class="fa fa-lock"></i>
+                  {{ form.password1 }}
+                </div>
+                {% if form.password1.errors %}
+                <div class="field-error">
+                  <i class="fa fa-circle-xmark"></i> {{
+                  form.password1.errors|join:", " }}
+                </div>
+                {% endif %}
+              </div>
+              <div class="form-group">
+                <label>Confirmation <span>*</span></label>
+                <div class="input-wrap">
+                  <i class="fa fa-lock"></i>
+                  {{ form.password2 }}
+                </div>
+                {% if form.password2.errors %}
+                <div class="field-error">
+                  <i class="fa fa-circle-xmark"></i> {{
+                  form.password2.errors|join:", " }}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            
+    
+
+            <button type="button" class="btn-submit" id="openModal">
+              <i class="fa fa-user-plus"></i> S'inscrire
+            </button>
+
+            <!-- Confirmation Modal -->
+            <div class="modal-overlay" id="modalOverlay">
+              <div class="modal">
+                <div class="modal-head">
+                  <div class="modal-icon">
+                    <i class="fa fa-triangle-exclamation"></i>
+                  </div>
+                  <div>
+                    <h3>Confirmer l'inscription</h3>
+                  </div>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    Veuillez vérifier vos informations avant de confirmer. Une
+                    fois inscrit, certaines données ne pourront plus être
+                    modifiées.
+                  </p>
+                </div>
+                <div class="modal-actions">
+                  <button type="button" class="btn-cancel" id="cancelModal">
+                    <i class="fa fa-xmark"></i> Annuler
+                  </button>
+                  <button type="submit" class="btn-confirm">
+                    <i class="fa fa-check"></i> Confirmer
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+        </div>
+
+        <div class="auth-foot">
+          Vous avez déjà un compte ?
+          <a href="{% url 'account_login' %}">Se connecter</a>
+          
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/signup.js' %}"></script>
+  </body>
+</html>

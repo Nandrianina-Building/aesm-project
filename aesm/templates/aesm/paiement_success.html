@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement réussi — AESM</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/paiement_success.css' %}" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+  </div>
+
+  <!-- ── SUCCESS CARD ── -->
+  <div class="page-wrap">
+    <div class="success-card">
+
+      <!-- Header avec checkmark animé -->
+      <div class="success-top">
+        <div class="check-ring">
+          <svg viewBox="0 0 80 80">
+            <circle class="ring-bg"     cx="40" cy="40" r="35"/>
+            <circle class="ring-circle" cx="40" cy="40" r="35"/>
+            <polyline class="ring-check" points="22,40 34,52 58,28"/>
+          </svg>
+        </div>
+        <h1>Paiement réussi !</h1>
+        <p>Votre paiement a bien été enregistré. Bienvenue dans l'association.</p>
+      </div>
+
+      <!-- Détails transaction -->
+      <div class="success-body">
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa fa-receipt"></i> Transaction</div>
+            <div class="detail-value">{{ quitus.paiement.transaction_id }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa fa-coins"></i> Montant</div>
+            <div class="detail-value green">{{ quitus.paiement.montant }} Ar</div>
+          </div>
+
+          <div class="detail-item" style="grid-column: 1 / -1;">
+            <div class="detail-label"><i class="fa fa-circle-check"></i> Statut</div>
+            <div style="margin-top: 4px;">
+              <span class="status-badge">
+                <i class="fa fa-circle-check"></i>
+                {{ quitus.paiement.statut }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="success-actions">
+        <a href="{{ quitus.fichier_pdf.url }}" download class="btn-download">
+          <i class="fa fa-file-pdf"></i> Télécharger mon quitus
+        </a>
+        <a href="{% url 'dashboardAesm' %}" class="btn-dashboard">
+          <i class="fa fa-arrow-left"></i> Retour au tableau de bord
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/paiement_success.js' %}"></script>
+</body>
+</html>

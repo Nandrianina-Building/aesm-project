@@ -1,0 +1,216 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Centre de Réflexion</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/dashboard_cr.css' %}" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">CR</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+        <a href="#" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="badge-free"><i class="fa fa-unlock"></i> Accès gratuit</div>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+    <a href="#" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="#" style="color:#2d8653;border-color:#c3e6d0;">
+      <i class="fa fa-unlock"></i> Accès public et gratuit
+    </a>
+  </div>
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Centre de Réflexion</h1>
+      <p>Espace de partage et de réflexion académique — ouvert à tous, gratuitement</p>
+    </div>
+  </div>
+
+  <!-- ── MAIN WRAPPER ── -->
+  <div class="main-wrapper">
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-cat="apercu">Aperçu</button>
+      <button class="tab-btn" data-cat="publications">Publications</button>
+      <button class="tab-btn" data-cat="fichiers">Fichiers</button>
+      <button class="tab-btn" data-cat="categories">Thématiques</button>
+    </div>
+
+    <!-- ══ APERÇU ══ -->
+    <div class="section apercu active">
+      <div class="content-grid">
+
+        <!-- Mission -->
+        <div class="content-card">
+          <h2><i class="fa fa-bullseye" style="color:var(--cr-mid);margin-right:8px;"></i>Notre mission</h2>
+          <p>Le Centre de Réflexion, espace dédié à la diffusion de connaissances académiques.</p>
+          <div class="pillars">
+            <div class="pillar">
+              <div class="pillar-icon"><i class="fa fa-graduation-cap"></i></div>
+              <div class="pillar-text">
+                <h4>Publications académiques</h4>
+                <p>Articles et études de qualité</p>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-icon"><i class="fa fa-flask"></i></div>
+              <div class="pillar-text">
+                <h4>Études et recherches</h4>
+                <p>Travaux de recherche et analyses</p>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="pillar-icon"><i class="fa fa-unlock"></i></div>
+              <div class="pillar-text">
+                <h4>Accès public et gratuit</h4>
+                <p>Aucune inscription requise</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publications récentes -->
+        <div class="content-card">
+          <h2><i class="fa fa-newspaper" style="color:var(--cr-mid);margin-right:8px;"></i>Publications récentes</h2>
+          <p>Dernières publications de l'espace académique.</p>
+          <div class="pub-list">
+            {% for publication in publications %}
+            <div class="pub-item">
+              <div class="pub-item-info">
+                <h3>{{ publication.titre }}</h3>
+                <p>
+                  {% if publication.date_publication|timesince == '0 minute' %}
+                  À l'instant
+                  {% else %}
+                  Il y a {{ publication.date_publication|timesince }}
+                  {% endif %}
+                </p>
+              </div>
+              <a href="{% url 'publication_detail_cr' publication.id %}" class="btn-sm">
+                Lire <i class="fa fa-arrow-right"></i>
+              </a>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+              <i class="fa fa-newspaper"></i>
+              <p>Aucune publication pour le moment.</p>
+            </div>
+            {% endfor %}
+          </div>
+          <a href="{% url 'publication_cr' %}" class="view-all-link">
+            Voir toutes les publications <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- Ressources pédagogiques -->
+        <div class="content-card">
+          <h2><i class="fa fa-folder-open" style="color:var(--cr-mid);margin-right:8px;"></i>Ressources pédagogiques</h2>
+          <p>Documents et fichiers partagés librement.</p>
+          <a href="{% url 'list_fichier' %}" class="btn btn-outline">
+            <i class="fa fa-download"></i> Accéder aux fichiers
+          </a>
+        </div>
+
+        <!-- Thématiques -->
+        <div class="content-card">
+          <h2><i class="fa fa-tags" style="color:var(--cr-mid);margin-right:8px;"></i>Thématiques</h2>
+          <p>Explorez les domaines couverts par le Centre de Réflexion.</p>
+          <div class="cat-tags">
+            {% for category in categories %}
+            <a href="{% url 'publication_cr' %}?category={{ category.id }}" class="cat-tag">
+              <i class="fa fa-bookmark"></i> {{ category.name }}
+            </a>
+            {% empty %}
+            <p style="font-size:13.5px;color:var(--text-muted);font-style:italic;">Aucune catégorie disponible.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ PUBLICATIONS ══ -->
+    <div class="section publications">
+      <div class="content-grid">
+        <div class="content-card full">
+          <h2><i class="fa fa-newspaper" style="color:var(--cr-mid);margin-right:8px;"></i>Publications</h2>
+          <p>Consultez toutes les publications académiques du Centre de Réflexion.</p>
+          <a href="{% url 'publication_cr' %}" class="btn btn-primary" style="width:auto;display:inline-flex;">
+            <i class="fa fa-arrow-right"></i> Voir toutes les publications
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FICHIERS ══ -->
+    <div class="section fichiers">
+      <div class="content-grid">
+        <div class="content-card full">
+          <h2><i class="fa fa-folder-open" style="color:var(--cr-mid);margin-right:8px;"></i>Fichiers et Ressources</h2>
+          <p>Documents, supports de cours et ressources pédagogiques accessibles à tous.</p>
+          <a href="{% url 'list_fichier' %}" class="btn btn-primary" style="width:auto;display:inline-flex;">
+            <i class="fa fa-download"></i> Voir les fichiers
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CATEGORIES ══ -->
+    <div class="section categories">
+      <div class="content-grid">
+        <div class="content-card full">
+          <h2><i class="fa fa-tags" style="color:var(--cr-mid);margin-right:8px;"></i>Thématiques disponibles</h2>
+          <p>Explorez les domaines et disciplines couverts par le Centre de Réflexion.</p>
+          <div class="cat-tags">
+            {% for category in categories %}
+            <a href="{% url 'publication_cr' %}?category={{ category.id }}" class="cat-tag">
+              <i class="fa fa-bookmark"></i> {{ category.name }}
+            </a>
+            {% empty %}
+            <div class="empty-state" style="width:100%;">
+              <i class="fa fa-tags"></i>
+              <p>Aucune catégorie disponible pour le moment.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-wrapper -->
+
+  <script src="{% static 'js/dashboard_cr.js' %}"></script>
+    
+  </script>
+</body>
+</html>

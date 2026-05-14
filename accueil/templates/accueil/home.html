@@ -1,0 +1,112 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plateforme AESM & CR</title>
+    {% include 'includes/favicon.html' %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style></style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="brand">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </div>
+
+      <!-- <div class="nav-links">
+        <a href="#"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"
+          ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+        >
+      </div> -->
+
+      <!-- <div class="navbar-right">
+        <a href="{% url 'account_login' %}" class="btn-login">
+          <i class="fa fa-right-to-bracket"></i> Connexion
+        </a>
+      </div> -->
+
+      <!-- <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button> -->
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#"><i class="fa fa-house"></i> Accueil</a>
+      <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+      <a href="{% url 'dashboardCr' %}"
+        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+      >
+      <a href="{% url 'account_login' %}"
+        ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+    </div>
+
+    <!-- ── HERO ── -->
+    <div class="hero">
+      <h1>Plateforme AESM &amp; CR</h1>
+      <p>
+        Bienvenue sur la plateforme de gestion des associations étudiantes et du
+        Centre de Réflexion
+      </p>
+    </div>
+
+    <!-- ── CARDS ── -->
+    <div class="cards-wrap">
+      <div class="cards-grid">
+        <!-- AESM Card -->
+        <div class="card blue-card">
+          <div class="card-icon blue">
+            <i class="fa fa-users"></i>
+          </div>
+          <h2>AESM</h2>
+          <span>Association des Étudiants en Sociologie de Madagascar</span>
+          <ul class="card-features">
+            <li>Inscription et paiement des membres</li>
+            <li>Génération de quitus numérique</li>
+            <li>Rapports budgétaires et gestion</li>
+            <li>Publications et ressources</li>
+          </ul>
+          <a href="{% url 'dashboardAesm' %}" class="btn-card blue-btn">
+            Accéder à AESM <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <!-- CR Card -->
+        <div class="card purple-card">
+          <div class="card-icon purple">
+            <i class="fa fa-book-open"></i>
+          </div>
+          <h2>Centre de Réflexion</h2>
+          <span>Espace de partage et de réflexion académique</span>
+          <ul class="card-features">
+            <li>Publications académiques</li>
+            <li>Études et recherches</li>
+            <li>Ressources pédagogiques</li>
+            <li>Accès public et gratuit</li>
+          </ul>
+          <a href="{% url 'dashboardCr' %}" class="btn-card purple-btn">
+            Accéder au CR <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/home.js' %}"></script>
+  </body>
+</html>

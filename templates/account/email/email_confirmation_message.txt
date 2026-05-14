@@ -1,0 +1,12 @@
+Bonjour,
+
+Merci de votre inscription.
+
+Veuillez confirmer votre adresse email en cliquant sur le lien ci-dessous :
+
+{{ activate_url }}
+
+Si vous n'êtes pas à l'origine de cette inscription,
+vous pouvez ignorer cet email.
+
+L'équipe AESM

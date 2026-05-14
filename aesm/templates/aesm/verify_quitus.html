@@ -1,0 +1,126 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vérification Quitus — AESM</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'aesm/css/verify_quitus.css' %}" />
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- ── TOP BAR ── -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <i class="fa fa-shield-halved"></i>
+        Vérification AESM
+      </div>
+      <a href="{% url 'scanner_qr' %}" class="btn-scan-again">
+        <i class="fa fa-qrcode"></i> Scanner à nouveau
+      </a>
+    </div>
+
+    <!-- ── VALID BANNER ── -->
+    <div class="valid-banner">
+      <div class="valid-icon">
+        <svg viewBox="0 0 32 32">
+          <circle class="ring-circle" cx="16" cy="16" r="14"/>
+          <polyline class="ring-check" points="9,16 13,21 23,11"/>
+        </svg>
+      </div>
+      <div class="valid-text">
+        <h2>Quitus Valide</h2>
+        <p>Ce quitus a été vérifié et est authentique</p>
+      </div>
+    </div>
+
+    <!-- ── BODY ── -->
+    <div class="card-body">
+
+      <!-- Membre -->
+      <div>
+        <div class="sect-label"><i class="fa fa-user"></i> Informations du membre</div>
+        <div class="info-block">
+          <div class="info-row">
+            <div class="row-icon blue"><i class="fa fa-id-card"></i></div>
+            <div class="row-content">
+              <div class="row-label">Matricule</div>
+              <div class="row-value">{{ etudiant.matricule }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="row-icon blue"><i class="fa fa-user"></i></div>
+            <div class="row-content">
+              <div class="row-label">Nom complet</div>
+              <div class="row-value">{{ etudiant.user.last_name }} {{ etudiant.user.first_name }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="row-icon purple"><i class="fa fa-envelope"></i></div>
+            <div class="row-content">
+              <div class="row-label">Email</div>
+              <div class="row-value">{{ etudiant.user.email }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paiement -->
+      <div>
+        <div class="sect-label"><i class="fa fa-receipt"></i> Détails du paiement</div>
+        <div class="info-block">
+          <div class="info-row">
+            <div class="row-icon blue"><i class="fa fa-hashtag"></i></div>
+            <div class="row-content">
+              <div class="row-label">N° Transaction</div>
+              <div class="row-value">{{ paiement.transaction_id }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="row-icon orange"><i class="fa fa-coins"></i></div>
+            <div class="row-content">
+              <div class="row-label">Montant payé</div>
+              <div class="row-value">{{ paiement.montant }} Ar</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="row-icon blue"><i class="fa fa-calendar-check"></i></div>
+            <div class="row-content">
+              <div class="row-label">Date de paiement</div>
+              <div class="row-value">{{ paiement.date_payement }}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="row-icon green"><i class="fa fa-circle-check"></i></div>
+            <div class="row-content">
+              <div class="row-label">Statut</div>
+              <div class="row-value">
+                <span class="pill-valid">
+                  <i class="fa fa-circle-check"></i> {{ paiement.statut }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="card-footer">
+      <a href="{% url 'dashboardAesm' %}" class="btn-dashboard">
+        <i class="fa fa-arrow-left"></i> Retour au tableau de bord
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

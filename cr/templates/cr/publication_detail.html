@@ -1,0 +1,134 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ publication.titre }} — Centre de Réflexion</title>
+  {% include 'includes/favicon.html' %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/publication_detail_cr.css' %}">
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">CR</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="badge-free"><i class="fa fa-unlock"></i> Accès gratuit</div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}" class="active"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="#" style="color:#2d8653;border-color:#c3e6d0;">
+      <i class="fa fa-unlock"></i> Accès public et gratuit
+    </a>
+  </div>
+
+  <!-- ── ARTICLE ── -->
+  <div class="page-wrap">
+
+    <a class="back-link" href="{% url 'publication_cr' %}">
+      <i class="fa fa-arrow-left"></i> Retour aux publications
+    </a>
+
+    <div class="article-card">
+
+      <!-- Image -->
+      {% if publication.image %}
+      <div class="article-img">
+        <img src="{{ publication.image.url }}" alt="{{ publication.titre }}" />
+      </div>
+      {% else %}
+      <div class="article-img"><i class="fa fa-file-lines"></i></div>
+      {% endif %}
+
+      <!-- Barre verte signature CR -->
+      <div class="cr-bar"></div>
+
+      <!-- Header -->
+      <div class="article-header">
+        <div class="article-meta-top">
+          {% if publication.categorie %}
+          <span class="badge badge-cat">
+            <i class="fa fa-bookmark"></i> {{ publication.categorie }}
+          </span>
+          {% endif %}
+          {% if publication.admin %}
+          <span class="badge badge-admin">
+            <i class="fa fa-user-shield"></i> {{ publication.admin }}
+          </span>
+          {% endif %}
+          <span class="badge badge-open">
+            <i class="fa fa-unlock"></i> Accès libre
+          </span>
+        </div>
+
+        <h1 class="article-title">{{ publication.titre }}</h1>
+        <div class="title-accent"></div>
+
+        <div class="article-meta">
+          <span>
+            <i class="fa fa-calendar"></i>
+            {{ publication.date_publication|date:"d/m/Y" }}
+          </span>
+          {% if publication.count_view %}
+          <span>
+            <i class="fa fa-eye"></i>
+            {{ publication.count_view }} vues
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Contenu -->
+      <div class="article-body">
+        <div class="article-content">
+          {{ publication.contenu|linebreaks }}
+        </div>
+      </div>
+
+      <!-- Footer sans j'aime -->
+      <div class="article-footer">
+        <div class="footer-meta">
+          
+          {% if publication.categorie %}
+          <span>
+            <i class="fa fa-bookmark"></i>
+            {{ publication.categorie }}
+          </span>
+          {% endif %}
+        </div>
+        <a href="{% url 'publication_cr' %}" class="btn-back-foot">
+          <i class="fa fa-arrow-left"></i> Retour
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/publication_detail_cr.js' %}">
+    
+  </script>
+
+</body>
+</html>
