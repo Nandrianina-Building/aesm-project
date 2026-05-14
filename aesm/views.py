@@ -150,7 +150,8 @@ def dashboardAesmView(request):
         try:
             context['quitus'] = inscription.paiement.quitus
         except Quitus.DoesNotExist:
-            verfification_url = f"http://localhost:8000/aesm/verify/{inscription.paiement.transaction_id}/"
+            verfification_url = f"https://nandrianina04.pythonanywhere.com/aesm/verify/{inscription.paiement.transaction_id}/"
+            
             qr_file = generate_qr_code(verfification_url)
             pdf_file = generate_pdf(inscription.paiement.transaction_id, qr_file, etudiant)
             quitus = Quitus.objects.create(
@@ -335,7 +336,8 @@ def creer_paiement(request):
         inscription.save()
 
         verfification_url = (
-            f"http://localhost:8000/aesm/verify/{transaction_id}/"
+            f"https://nandrianina04.pythonanywhere.com/aesm/verify/{transaction_id}/"
+            
         )
 
         qr_file = generate_qr_code(verfification_url)
