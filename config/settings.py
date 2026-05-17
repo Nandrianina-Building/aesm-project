@@ -103,7 +103,17 @@ ACCOUNT_FORMS = {
     'signup': 'accounts.forms.CustomSignUpForm'
 }
 
+ALLOWED_HOSTS = [
+    'Nandrianina04.pythonanywhere.com',
+    'localhost',
+    '127.0.0.1'
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://Nandrianina04.pythonanywhere.com'
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # =========================
 # EMAIL (PRODUCTION SMTP)
 # =========================
