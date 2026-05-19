@@ -207,7 +207,7 @@ def liste_publication(request):
             pass
 
     # ── Pagination ────────────────────────────────────────────
-    paginator = Paginator(qs, 3)
+    paginator = Paginator(qs, 10)
 
     try:
         page_obj = paginator.page(page_num)
