@@ -12,57 +12,22 @@ mobileMenu.querySelectorAll("a").forEach((l) =>
   }),
 );
 
-// ── Filter logic ──
-const searchInput = document.getElementById("search");
-const catSelect = document.getElementById("catSelect");
-const catPills = document.querySelectorAll(".cat-pill");
-const pubs = document.querySelectorAll(".pub-item");
-const noResults = document.getElementById("no-results");
-
-let selectedCat = "all";
-
-function filter() {
-  const q = searchInput.value.toLowerCase().trim();
-  let visible = 0;
-
-  pubs.forEach((p) => {
-    const title = p.dataset.title || "";
-    const content = p.dataset.content || "";
-    const category = p.dataset.category || "";
-
-    const matchSearch = !q || title.includes(q) || content.includes(q);
-    const matchCategory = selectedCat === "all" || category === selectedCat;
-
-    if (matchSearch && matchCategory) {
-      p.style.display = "flex";
-      visible++;
-    } else {
-      p.style.display = "none";
-    }
-  });
-
-  noResults.style.display = visible === 0 ? "block" : "none";
-}
-
-// Search input
-searchInput.addEventListener("input", filter);
-
-// Category pills (desktop)
-catPills.forEach((pill) => {
-  pill.addEventListener("click", () => {
-    catPills.forEach((p) => p.classList.remove("active"));
-    pill.classList.add("active");
-    selectedCat = pill.dataset.id;
-    catSelect.value = selectedCat;
-    filter();
-  });
+// ── Soumission auto du formulaire ──
+// Quand l'utilisateur tape dans la recherche → soumet après 400ms
+// → retourne automatiquement à la page 1 (pas de page= dans l'URL)
+const searchInput = document.getElementById("searchInput");
+let searchTimer;
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    document.getElementById("filterForm").submit();
+  }, 400);
 });
 
-// Category select (mobile)
-catSelect.addEventListener("change", () => {
-  selectedCat = catSelect.value;
-  catPills.forEach((p) => {
-    p.classList.toggle("active", p.dataset.id === selectedCat);
+// Le select mobile soumet aussi immédiatement
+document
+  .getElementById("catSelectMobile")
+  .addEventListener("change", function () {
+    document.getElementById("catHidden").value = this.value;
+    document.getElementById("filterForm").submit();
   });
-  filter();
-});
