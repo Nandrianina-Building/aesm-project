@@ -2,188 +2,254 @@
 {% load humanize %}
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Publications AESM</title>
-    {% include 'includes/favicon.html' %}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="{% static 'css/publication.css' %}">
-  </head>
-  <body>
-    <!-- ── NAVBAR ── -->
-    <nav class="navbar">
-      <div class="navbar-left">
-        <a class="brand" href="{% url 'home' %}">
-          <div class="brand-icon">AC</div>
-          AESM &amp; CR
-        </a>
-        <div class="nav-links">
-          <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
-          <a href="{% url 'dashboardAesm' %}" class="active"
-            ><i class="fa fa-users"></i> AESM</a
-          >
-          <a href="{% url 'dashboardCr' %}"
-            ><i class="fa fa-book-open"></i> Centre de Réflexion</a
-          >
-        </div>
-      </div>
-      <div class="navbar-right">
-        <a href="{% url 'admin:index' %}"
-          ><i class="fa fa-shield-halved"></i> Administrateur</a
-        >
-        {% if request.user.is_authenticated %}
-        <button class="btn-logout">
-          <i class="fa fa-right-from-bracket"></i> Déconnexion
-        </button>
-        {% else %}
-        <a href="{% url 'account_login' %}" class="btn-logout">
-          <i class="fa fa-right-to-bracket"></i> Connexion
-        </a>
-        {% endif %}
-      </div>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publications AESM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/publication.css' %}" />
+  {% include 'includes/favicon.html' %}
+</head>
+<body>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
-      <a href="{% url 'dashboardAesm' %}" class="active"
-        ><i class="fa fa-users"></i> AESM</a
-      >
-      <a href="{% url 'dashboardCr' %}"
-        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
-      >
-      <div class="mobile-divider"></div>
-      <a href="{% url 'admin:index' %}"
-        ><i class="fa fa-shield-halved"></i> Administrateur</a
-      >
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a class="brand" href="{% url 'home' %}">
+        <div class="brand-icon">AC</div>
+        AESM &amp; CR
+      </a>
+      <div class="nav-links">
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
       {% if request.user.is_authenticated %}
-      <a href="{% url 'account_logout' %}"
-        ><i class="fa fa-right-from-bracket"></i> Déconnexion</a
-      >
+      <button class="btn-logout"><i class="fa fa-right-from-bracket"></i> Déconnexion</button>
       {% else %}
-      <a href="{% url 'account_login' %}"
-        ><i class="fa fa-right-to-bracket"></i> Connexion</a
-      >
+      <a href="{% url 'account_login' %}" class="btn-logout"><i class="fa fa-right-to-bracket"></i> Connexion</a>
       {% endif %}
     </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
 
-    <!-- ── PAGE CONTENT ── -->
-    <div class="page-wrap">
-      <a class="back-link" href="javascript:history.back()">
-        <i class="fa fa-arrow-left"></i> Retour
-      </a>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+    <a href="{% url 'dashboardAesm' %}" class="active"><i class="fa fa-users"></i> AESM</a>
+    <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+    <div class="mobile-divider"></div>
+    <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+    {% else %}
+    <a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a>
+    {% endif %}
+  </div>
 
-      <div class="page-title">
-        <h1>Publications AESM</h1>
-        <p>Actualités, événements et annonces de l'association</p>
-      </div>
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Publications AESM</h1>
+      <p>Actualités, événements et annonces de l'association</p>
+    </div>
+  </div>
 
-      <!-- Search + Category filter -->
+  <div class="page-wrap">
+    <a class="back-link" href="javascript:history.back()">
+      <i class="fa fa-arrow-left"></i> Retour
+    </a>
+
+    <!-- ── FORMULAIRE RECHERCHE + FILTRE ── -->
+    {# Le form soumet en GET — garde search + category dans l'URL pour la pagination #}
+    <form method="get" id="filterForm" autocomplete="off">
+
       <div class="search-bar">
         <div class="search-wrap">
           <i class="fa fa-magnifying-glass"></i>
           <input
             type="text"
-            id="search"
+            name="q"
+            id="searchInput"
+            value="{{ search }}"
             placeholder="Rechercher une publication..."
-            autocomplete="off"
           />
         </div>
+
+        {# Select mobile #}
         <div class="cat-select-wrap">
-          <select class="cat-select" id="catSelect">
-            <option value="all">Toutes</option>
+          <select name="category" id="catSelectMobile" class="cat-select">
+            <option value="all" {% if not cat_id or cat_id == 'all' %}selected{% endif %}>Toutes</option>
             {% for cat in categories %}
-            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            <option value="{{ cat.id }}" {% if cat_id == cat.id|stringformat:"s" %}selected{% endif %}>
+              {{ cat.name }}
+            </option>
             {% endfor %}
           </select>
           <i class="fa fa-chevron-down"></i>
         </div>
+
+        {# Champ caché utilisé par les pills desktop #}
+        <input type="hidden" name="category" id="catHidden" value="{{ cat_id|default:'all' }}" />
       </div>
 
-      <!-- Category pills -->
+      {# Pills desktop #}
       <div class="cat-pills">
-        <button class="cat-pill active" data-id="all">Toutes</button>
+        <button type="submit" class="cat-pill {% if not cat_id or cat_id == 'all' %}active{% endif %}"
+                onclick="document.getElementById('catHidden').value='all'">
+          Toutes
+        </button>
         {% for cat in categories %}
-        <button class="cat-pill" data-id="{{ cat.id }}">{{ cat.name }}</button>
+        <button type="submit" class="cat-pill {% if cat_id == cat.id|stringformat:'s' %}active{% endif %}"
+                onclick="document.getElementById('catHidden').value='{{ cat.id }}'">
+          {{ cat.name }}
+        </button>
         {% endfor %}
       </div>
 
-      <!-- Publications list -->
-      <div id="pub-list">
-        {% for pub in publications %}
-        <div
-          class="pub-item"
-          data-title="{{ pub.titre|lower }}"
-          data-content="{{ pub.contenu|lower }}"
-          data-category="{{ pub.categorie.id }}"
-        >
-          <div class="pub-img">
-            {% if pub.image %}
-            <img
-              src="{{ pub.image.url }}"
-              alt="{{ pub.titre }}"
-              loading="lazy"
-            />
-            {% else %}
-            <div class="pub-img-placeholder">
-              <i class="fa fa-newspaper"></i>
-            </div>
-            {% endif %}
-          </div>
+    </form>
 
-          <div class="pub-body">
-            <div class="pub-badge">
-              <i class="fa fa-tag"></i> {{ pub.categorie.name }}
-            </div>
-            <div class="pub-title">{{ pub.titre }}</div>
-            <div class="pub-meta">
-              <span
-                ><i class="fa fa-calendar"></i> {{pub.date_publication|date:"d/m/Y" }}</span
-              >
-              {% if pub.auteur %}
-              <span><i class="fa fa-user"></i> {{ pub.auteur }}</span>
-              {% endif %}
-            </div>
-            <p class="pub-excerpt">{{ pub.contenu|truncatewords:20 }}</p>
-            <a
-              href="{% url 'publication_detail_aesm' pub.id %}"
-              class="btn-read"
-            >
-              Lire la suite <i class="fa fa-arrow-right"></i>
-            </a>
-          </div>
-        </div>
-        {% empty %}
-        <div class="empty-state">
-          <i class="fa fa-newspaper"></i>
-          <p>Aucune publication pour le moment.</p>
-        </div>
-        {% endfor %}
-      </div>
-
-      <!-- No results message (hidden by default) -->
-      <div id="no-results" style="display: none">
-        <div class="empty-state">
-          <i class="fa fa-magnifying-glass"></i>
-          <p>Aucune publication ne correspond à votre recherche.</p>
-        </div>
-      </div>
+    {# Filtres actifs #}
+    {% if search or cat_id and cat_id != 'all' %}
+    <div class="active-filters">
+      <span style="font-size:12px;color:var(--text-muted);font-weight:600;">Filtres actifs :</span>
+      {% if search %}
+      <span class="filter-tag">
+        <i class="fa fa-magnifying-glass"></i> "{{ search }}"
+        <a href="?{% if cat_id and cat_id != 'all' %}category={{ cat_id }}{% endif %}">
+          <i class="fa fa-xmark"></i>
+        </a>
+      </span>
+      {% endif %}
+      {% if cat_id and cat_id != 'all' %}
+      {% for cat in categories %}{% if cat.id|stringformat:"s" == cat_id %}
+      <span class="filter-tag">
+        <i class="fa fa-tag"></i> {{ cat.name }}
+        <a href="?{% if search %}q={{ search }}{% endif %}">
+          <i class="fa fa-xmark"></i>
+        </a>
+      </span>
+      {% endif %}{% endfor %}
+      {% endif %}
+      <a href="?" style="font-size:12px;color:var(--text-muted);font-weight:600;text-decoration:underline;">
+        Tout effacer
+      </a>
     </div>
-    <!-- /page-wrap -->
-  
-    <script src="{% static 'js/publication.js' %}"></script>
-  </body>
+    {% endif %}
+
+    {# Compteur de résultats #}
+    <p class="results-info">
+      <strong>{{ total }}</strong> publication{{ total|pluralize }} trouvée{{ total|pluralize }}
+      {% if search %} pour "<strong>{{ search }}</strong>"{% endif %}
+    </p>
+
+    <!-- ── LISTE DES PUBLICATIONS ── -->
+    <div id="pub-list">
+      {% for pub in publications %}
+      <div class="pub-item">
+        <div class="pub-img">
+          {% if pub.image %}
+          <img src="{{ pub.image.url }}" alt="{{ pub.titre }}" loading="lazy" />
+          {% else %}
+          <div class="pub-img-placeholder"><i class="fa fa-newspaper"></i></div>
+          {% endif %}
+        </div>
+        <div class="pub-body">
+          <div class="pub-badge"><i class="fa fa-tag"></i> {{ pub.categorie.name }}</div>
+          <div class="pub-title">{{ pub.titre }}</div>
+          <div class="pub-meta">
+            <span><i class="fa fa-calendar"></i> {{ pub.date_publication|date:"d/m/Y" }}</span>
+            {% if pub.auteur %}<span><i class="fa fa-user"></i> {{ pub.auteur }}</span>{% endif %}
+          </div>
+          <p class="pub-excerpt">{{ pub.contenu|truncatewords:20 }}</p>
+          <a href="{% url 'publication_detail_aesm' pub.id %}" class="btn-read">
+            Lire la suite <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-state">
+        <i class="fa fa-newspaper"></i>
+        <p>Aucune publication ne correspond à votre recherche.</p>
+        <a href="?"><i class="fa fa-xmark"></i> Réinitialiser les filtres</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── PAGINATION ── -->
+    {# Chaque lien de page conserve les paramètres search et category #}
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination-wrap">
+
+      {# Première page #}
+      {% if page_obj.has_previous %}
+      <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page=1" title="Première">
+        <i class="fa fa-angles-left"></i>
+      </a>
+      <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page={{ page_obj.previous_page_number }}">
+        <i class="fa fa-chevron-left"></i> Précédent
+      </a>
+      {% else %}
+      <span class="page-btn disabled"><i class="fa fa-angles-left"></i></span>
+      <span class="page-btn disabled"><i class="fa fa-chevron-left"></i> Précédent</span>
+      {% endif %}
+
+      {# Numéros de pages — affiche au max 5 pages autour de la page courante #}
+      {% for i in page_obj.paginator.page_range %}
+        {% if i == 1 or i == page_obj.paginator.num_pages %}
+          {# Toujours afficher première et dernière #}
+          {% if i == page_obj.number %}
+          <span class="page-btn active">{{ i }}</span>
+          {% else %}
+          <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page={{ i }}">{{ i }}</a>
+          {% endif %}
+          {# Ellipse après première #}
+          {% if i == 1 and page_obj.number > 4 %}
+          <span class="page-sep">…</span>
+          {% endif %}
+          {# Ellipse avant dernière #}
+          {% if i == page_obj.paginator.num_pages and page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+          <span class="page-sep">…</span>
+          {% endif %}
+        {% elif i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+          {# Fenêtre de 5 autour de la page courante #}
+          {% if i == page_obj.number %}
+          <span class="page-btn active">{{ i }}</span>
+          {% else %}
+          <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page={{ i }}">{{ i }}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {# Page suivante #}
+      {% if page_obj.has_next %}
+      <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page={{ page_obj.next_page_number }}">
+        Suivant <i class="fa fa-chevron-right"></i>
+      </a>
+      <a class="page-btn" href="?q={{ search }}&category={{ cat_id|default:'all' }}&page={{ page_obj.paginator.num_pages }}" title="Dernière">
+        <i class="fa fa-angles-right"></i>
+      </a>
+      {% else %}
+      <span class="page-btn disabled">Suivant <i class="fa fa-chevron-right"></i></span>
+      <span class="page-btn disabled"><i class="fa fa-angles-right"></i></span>
+      {% endif %}
+
+    </div>
+
+    {# Info page courante #}
+    <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:12px;">
+      Page <strong>{{ page_obj.number }}</strong> sur <strong>{{ page_obj.paginator.num_pages }}</strong>
+    </p>
+    {% endif %}
+
+  </div><!-- /page-wrap -->
+
+  <script src="{% static 'js/publication.js' %}">
+  </script>
+</body>
 </html>
