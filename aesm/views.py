@@ -2,7 +2,8 @@ from urllib import request
 import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from cr.models import Publication, Files, Category, FileCategory
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Inscription, Paiement, Quitus, User
 from accounts.models import Etudiant
@@ -173,23 +174,58 @@ def dashboardAesmView(request):
 
 
 def liste_publication(request):
+    """
+    Liste des publications AESM avec :
+    - Recherche full-text (titre + contenu)
+    - Filtre par catégorie
+    - Pagination 10 par page
+    La pagination reste cohérente avec la recherche et le filtre actifs.
+    """
 
-    publications = Publication.objects.filter(
+    # ── Paramètres GET ────────────────────────────────────────
+    search   = request.GET.get('q', '').strip()
+    cat_id   = request.GET.get('category', '').strip()
+    page_num = request.GET.get('page', 1)
+
+    # ── Queryset de base ──────────────────────────────────────
+    qs = Publication.objects.filter(
         section='AESM',
         statut='publie'
-    )
+    ).select_related('categorie').order_by('-date_publication')
+
+    # ── Filtre : recherche ────────────────────────────────────
+    if search:
+        qs = qs.filter(
+            Q(titre__icontains=search) | Q(contenu__icontains=search)
+        )
+
+    # ── Filtre : catégorie ────────────────────────────────────
+    if cat_id and cat_id != 'all':
+        try:
+            qs = qs.filter(categorie__id=int(cat_id))
+        except (ValueError, TypeError):
+            pass
+
+    # ── Pagination ────────────────────────────────────────────
+    paginator = Paginator(qs, 3)
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
 
     categories = Category.objects.filter(section='AESM')
 
-    return render(
-        request,
-        "aesm/publication.html",
-        {
-            'publications': publications,
-            'categories': categories
-        }
-    )
-
+    return render(request, 'aesm/publication.html', {
+        'publications': page_obj,
+        'page_obj':     page_obj,
+        'categories':   categories,
+        'search':       search,
+        'cat_id':       cat_id,
+        'total':        paginator.count,
+    })
 
 def publication_detail_aesm(request, pub_id):
     pub = get_object_or_404(
