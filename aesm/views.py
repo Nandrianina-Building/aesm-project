@@ -207,7 +207,7 @@ def liste_publication(request):
             pass
 
     # ── Pagination ────────────────────────────────────────────
-    paginator = Paginator(qs, 7)
+    paginator = Paginator(qs, 9)
 
     try:
         page_obj = paginator.page(page_num)
@@ -308,7 +308,7 @@ def liste_fichiersView(request):
             pass
 
     # ── Pagination ────────────────────────────────────────────
-    paginator = Paginator(qs, 3)
+    paginator = Paginator(qs, 10)
 
     try:
         page_obj = paginator.page(page_num)
