@@ -278,64 +278,55 @@ def like_publication(request, pub_id):
 
 @membre_actif_required
 def liste_fichiersView(request):
+    """
+    Liste des fichiers AESM avec :
+    - Recherche par nom de fichier
+    - Filtre par catégorie
+    - Pagination 10 par page
+    La pagination conserve search + category dans l'URL.
+    """
 
-    fichiers = Files.objects.filter(
+    # ── Paramètres GET ────────────────────────────────────────
+    search   = request.GET.get('search', '').strip()
+    cat_id   = request.GET.get('category', 'all').strip()
+    page_num = request.GET.get('page', 1)
+
+    # ── Queryset de base ──────────────────────────────────────
+    qs = Files.objects.filter(
         section='AESM'
-    ).order_by('-date_upload')
+    ).select_related('categorie').order_by('-date_upload')
 
-    # =========================
-    # SEARCH
-    # =========================
-
-    search = request.GET.get('search', '')
-
+    # ── Filtre : recherche ────────────────────────────────────
     if search:
-        fichiers = fichiers.filter(
-            nom_fichier__icontains=search
-        )
+        qs = qs.filter(nom_fichier__icontains=search)
 
-    # =========================
-    # CATEGORY
-    # =========================
+    # ── Filtre : catégorie ────────────────────────────────────
+    if cat_id and cat_id != 'all':
+        try:
+            qs = qs.filter(categorie__id=int(cat_id))
+        except (ValueError, TypeError):
+            pass
 
-    category = request.GET.get('category', 'all')
+    # ── Pagination ────────────────────────────────────────────
+    paginator = Paginator(qs, 3)
 
-    if category != 'all':
-        fichiers = fichiers.filter(
-            categorie__id=category
-        )
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
 
-    # =========================
-    # PAGINATION
-    # =========================
-
-    paginator = Paginator(fichiers, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
     categories = FileCategory.objects.filter(section='AESM')
 
-    # =========================
-    # AJAX
-    # =========================
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        html = render_to_string(
-            'aesm/includes/fichier_list.html',
-            {'fichiers': page_obj}
-        )
-        return JsonResponse({'html': html})
-
-    return render(
-        request,
-        'aesm/fichiers.html',
-        {
-            'fichiers': page_obj,
-            'page_obj': page_obj,
-            'categories': categories,
-        }
-    )
-
-
+    return render(request, 'aesm/fichiers.html', {
+        'fichiers':   page_obj,
+        'page_obj':   page_obj,
+        'categories': categories,
+        'search':     search,
+        'cat_id':     cat_id,
+        'total':      paginator.count,
+    })
 def dowload_fichierView(request, fichier_id):
     fichier = get_object_or_404(
         Files,
