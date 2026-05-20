@@ -8,21 +8,33 @@ from datetime import datetime
 from django.core.files import File
 from django.core.files.base import ContentFile
 
-
 W, H = A4  # 595 x 842 pts
 
-# ── Couleurs (r, g, b en 0..1) ──
-C_BLUE_DARK  = (0.10, 0.12, 0.66)
-C_BLUE_MID   = (0.18, 0.21, 0.79)
-C_BLUE_LIGHT = (0.55, 0.60, 1.00)
-C_WHITE      = (1.00, 1.00, 1.00)
-C_BG         = (0.95, 0.96, 0.99)
-C_BORDER     = (0.85, 0.87, 0.94)
-C_TEXT       = (0.15, 0.15, 0.20)
-C_MUTED      = (0.45, 0.47, 0.55)
-C_GREEN      = (0.09, 0.60, 0.30)
+# ═══════════════════════════════════════════════════════
+# CHARTE GRAPHIQUE CENTRALISÉE (Modifiable à volonté)
+# ═══════════════════════════════════════════════════════
+# Couleurs (r, g, b en 0..1) - Thème Document Administratif Sobre
+C_PRIMARY       = (0.05, 0.05, 0.05)  # Presque noir (En-tête, titres principaux, pied de page)
+C_SECONDARY     = (0.25, 0.25, 0.25)  # Gris foncé (Titres de sections)
+C_TEXT          = (0.15, 0.15, 0.15)  # Noir doux pour le texte principal
+C_MUTED         = (0.45, 0.45, 0.45)  # Gris moyen pour les labels
+C_WHITE         = (1.00, 1.00, 1.00)  # Blanc
+C_BG_LIGHT      = (0.97, 0.97, 0.97)  # Gris très clair pour les fonds de blocs
+C_BORDER        = (0.85, 0.85, 0.85)  # Gris clair pour les bordures
+
+# Statut - Couleurs du badge de validation
+C_STATUS_BG     = (0.95, 0.95, 0.95)  # Fond du badge
+C_STATUS_BORDER = (0.75, 0.75, 0.75)  # Bordure du badge
+C_STATUS_TEXT   = (0.10, 0.10, 0.10)  # Texte du badge
+
+# Polices standards
+F_REGULAR = "Helvetica"
+F_BOLD    = "Helvetica-Bold"
 
 
+# ═══════════════════════════════════════════════════════
+# FONCTIONS UTILITAIRES
+# ═══════════════════════════════════════════════════════
 def generate_qr_code(data):
     qr = qrcode.QRCode(
         version=1,
@@ -38,12 +50,6 @@ def generate_qr_code(data):
     buf.seek(0)
     return File(buf, name='qr.png')
 
-
-def _fill(p, color):
-    p.setFillColorRGB(*color)
-
-def _stroke(p, color):
-    p.setStrokeColorRGB(*color)
 
 def _rect(p, x, y, w, h, fill=None, stroke=None, radius=0, lw=0.5):
     p.saveState()
@@ -64,17 +70,20 @@ def _rect(p, x, y, w, h, fill=None, stroke=None, radius=0, lw=0.5):
 
 
 def _row(p, label, value, x, y, col_gap=160):
-    """Dessine label + valeur sur une même ligne."""
+    """Dessine un couple label / valeur aligné."""
     p.saveState()
-    p.setFont("Helvetica", 9)
+    p.setFont(F_REGULAR, 9)
     p.setFillColorRGB(*C_MUTED)
     p.drawString(x, y, label)
-    p.setFont("Helvetica-Bold", 10)
+    p.setFont(F_BOLD, 10)
     p.setFillColorRGB(*C_TEXT)
     p.drawString(x + col_gap, y, str(value) if value else "—")
     p.restoreState()
 
 
+# ═══════════════════════════════════════════════════════
+# GÉNÉRATION DU LOGICIEL PDF
+# ═══════════════════════════════════════════════════════
 def generate_pdf(transaction_id, qr_code, etudiant, paiement=None):
     buf  = BytesIO()
     p    = canvas.Canvas(buf, pagesize=A4)
@@ -84,113 +93,87 @@ def generate_pdf(transaction_id, qr_code, etudiant, paiement=None):
     date_str = now.strftime("%d/%m/%Y")
     annee    = now.strftime("%Y")
 
-    margin = 40   # marge gauche/droite
-    inner  = W - margin * 2  # largeur utile
+    margin = 40   # Marges latérales de sécurité
+    inner  = W - margin * 2
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 1 — EN-TÊTE  (y de 842 à 700)
-    # ═══════════════════════════════════════════════════════
-    hdr_top    = H          # 842
-    hdr_bottom = H - 130    # 712
+    # ── SECTION 1 — EN-TÊTE ADMINISTRATIF ──
+    hdr_bottom = H - 130
     hdr_h      = 130
 
-    _rect(p, 0, hdr_bottom, W, hdr_h, fill=C_BLUE_DARK)
+    _rect(p, 0, hdr_bottom, W, hdr_h, fill=C_PRIMARY)
 
-    # Cercles décoratifs
+    # Sigle Principal
     p.saveState()
-    p.setFillColorRGB(*C_BLUE_MID)
-    p.circle(W - 50, H - 30, 80, fill=1, stroke=0)
-    p.circle(W - 10, H - 105, 45, fill=1, stroke=0)
-    p.restoreState()
-
-    # Sigle
-    p.saveState()
-    p.setFont("Helvetica-Bold", 34)
+    p.setFont(F_BOLD, 34)
     p.setFillColorRGB(*C_WHITE)
     p.drawString(margin, H - 55, "AESM")
-    p.setFont("Helvetica", 9)
-    p.setFillColorRGB(*C_BLUE_LIGHT)
-    p.drawString(margin, H - 70, "Association des Étudiants en Sociologie de Madagascar")
+    p.setFont(F_REGULAR, 9)
+    p.setFillColorRGB(*C_BORDER)
+    p.drawString(margin, H - 72, "Association des Étudiants en Sociologie de Madagascar")
     p.restoreState()
 
-    # Titre centré
+    # Titre Centré Officiel
     p.saveState()
     p.setFillColorRGB(*C_WHITE)
-    p.setFont("Helvetica-Bold", 16)
-    titre = "QUITUS D'ADHÉSION"
-    p.drawCentredString(W / 2, H - 100, titre)
-    p.setFont("Helvetica", 9)
-    p.setFillColorRGB(*C_BLUE_LIGHT)
+    p.setFont(F_BOLD, 16)
+    p.drawCentredString(W / 2, H - 98, "QUITUS D'ADHÉSION")
+    p.setFont(F_REGULAR, 10)
+    p.setFillColorRGB(*C_BORDER)
     p.drawCentredString(W / 2, H - 116, f"Année académique {annee}")
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 2 — BANDEAU OFFICIEL  (y: 700 → 680)
-    # ═══════════════════════════════════════════════════════
-    band_y = hdr_bottom - 26   # 686
-    _rect(p, margin, band_y, inner, 22, fill=C_BG, stroke=C_BORDER, radius=4)
+    # ── SECTION 2 — BANDEAU D'AVERTISSEMENT ──
+    band_y = hdr_bottom - 26
+    _rect(p, margin, band_y, inner, 22, fill=C_BG_LIGHT, stroke=C_BORDER, radius=4)
 
     p.saveState()
-    p.setFont("Helvetica-BoldOblique", 8)
-    p.setFillColorRGB(*C_BLUE_DARK)
-    txt = "★  DOCUMENT OFFICIEL — VEUILLEZ CONSERVER CE DOCUMENT  ★"
+    p.setFont(F_BOLD, 8)
+    p.setFillColorRGB(*C_PRIMARY)
+    txt = "DOCUMENT OFFICIEL — À CONSERVER PRÉCIEUSEMENT"
     p.drawCentredString(W / 2, band_y + 7, txt)
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 3 — INFORMATIONS MEMBRE  (y: 670 → 530)
-    # ═══════════════════════════════════════════════════════
-    sec3_top = band_y - 18    # 668
+    # ── SECTION 3 — INFORMATIONS DU MEMBRE ──
+    sec3_top = band_y - 18
 
-    # Titre section
     p.saveState()
-    p.setFont("Helvetica-Bold", 10)
-    p.setFillColorRGB(*C_BLUE_DARK)
+    p.setFont(F_BOLD, 10)
+    p.setFillColorRGB(*C_SECONDARY)
     p.drawString(margin, sec3_top, "INFORMATIONS DU MEMBRE")
-    p.setStrokeColorRGB(*C_BLUE_DARK)
-    p.setLineWidth(2)
-    p.line(margin, sec3_top - 4, margin + 190, sec3_top - 4)
-    p.setStrokeColorRGB(*C_BLUE_LIGHT)
-    p.setLineWidth(1)
-    p.line(margin + 190, sec3_top - 4, margin + 230, sec3_top - 4)
+    p.setStrokeColorRGB(*C_SECONDARY)
+    p.setLineWidth(1.5)
+    p.line(margin, sec3_top - 4, margin + 160, sec3_top - 4)
     p.restoreState()
 
-    # Carte membre
     card3_h  = 130
-    card3_y  = sec3_top - card3_h - 14    # 524
+    card3_y  = sec3_top - card3_h - 14
     _rect(p, margin, card3_y, inner, card3_h, fill=C_WHITE, stroke=C_BORDER, radius=6)
 
-    # Lignes de données — espacées de 22pts
     row_x  = margin + 14
-    row_y0 = card3_y + card3_h - 24   # première ligne
+    row_y0 = card3_y + card3_h - 24
     gap    = 22
 
-    _row(p, "Matricule :",  etudiant.matricule,            row_x, row_y0)
-    _row(p, "Nom :",        etudiant.user.last_name,       row_x, row_y0 - gap)
-    _row(p, "Prénom :",     etudiant.user.first_name,      row_x, row_y0 - gap * 2)
-    _row(p, "Email :",      etudiant.user.email,            row_x, row_y0 - gap * 3)
-    _row(p, "Statut :",     "Membre Actif ✓",              row_x, row_y0 - gap * 4)
+    _row(p, "Numéro de matricule :", etudiant.matricule,        row_x, row_y0)
+    _row(p, "Nom :",                 etudiant.user.last_name,   row_x, row_y0 - gap)
+    _row(p, "Prénom :",              etudiant.user.first_name,  row_x, row_y0 - gap * 2)
+    _row(p, "Adresse électronique :", etudiant.user.email,       row_x, row_y0 - gap * 3)
+    _row(p, "Statut de l'adhérent :", "Membre Actif",           row_x, row_y0 - gap * 4)
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 4 — TRANSACTION  (y: 510 → 400)
-    # ═══════════════════════════════════════════════════════
-    sec4_top = card3_y - 22    # 502
+    # ── SECTION 4 — DÉTAILS DU RÈGLEMENT ──
+    sec4_top = card3_y - 22
 
     p.saveState()
-    p.setFont("Helvetica-Bold", 10)
-    p.setFillColorRGB(*C_BLUE_DARK)
+    p.setFont(F_BOLD, 10)
+    p.setFillColorRGB(*C_SECONDARY)
     p.drawString(margin, sec4_top, "DÉTAILS DE LA TRANSACTION")
-    p.setStrokeColorRGB(*C_BLUE_DARK)
-    p.setLineWidth(2)
-    p.line(margin, sec4_top - 4, margin + 215, sec4_top - 4)
-    p.setStrokeColorRGB(*C_BLUE_LIGHT)
-    p.setLineWidth(1)
-    p.line(margin + 215, sec4_top - 4, margin + 255, sec4_top - 4)
+    p.setStrokeColorRGB(*C_SECONDARY)
+    p.setLineWidth(1.5)
+    p.line(margin, sec4_top - 4, margin + 175, sec4_top - 4)
     p.restoreState()
 
     card4_h = 110
-    card4_y = sec4_top - card4_h - 14    # 378
-    _rect(p, margin, card4_y, inner, card4_h, fill=C_BG, stroke=C_BORDER, radius=6)
+    card4_y = sec4_top - card4_h - 14
+    _rect(p, margin, card4_y, inner, card4_h, fill=C_BG_LIGHT, stroke=C_BORDER, radius=6)
 
     row4_x  = margin + 14
     row4_y0 = card4_y + card4_h - 24
@@ -198,104 +181,92 @@ def generate_pdf(transaction_id, qr_code, etudiant, paiement=None):
     montant = f"{paiement.montant} Ar" if paiement else "2 000 Ar"
     statut  = paiement.statut          if paiement else "Validé"
 
-    _row(p, "N° Transaction :", str(transaction_id), row4_x, row4_y0)
-    _row(p, "Montant :",        montant,              row4_x, row4_y0 - gap)
-    _row(p, "Date de paiement :", date_str,           row4_x, row4_y0 - gap * 2)
+    _row(p, "Référence de transaction :", str(transaction_id), row4_x, row4_y0)
+    _row(p, "Montant de la cotisation :", montant,              row4_x, row4_y0 - gap)
+    _row(p, "Date effective du paiement :", date_str,           row4_x, row4_y0 - gap * 2)
 
-    # Statut avec badge vert
+    # Aligné sur l'architecture globale
     p.saveState()
-    p.setFont("Helvetica", 9)
+    p.setFont(F_REGULAR, 9)
     p.setFillColorRGB(*C_MUTED)
-    p.drawString(row4_x, row4_y0 - gap * 3, "Statut :")
-    # Badge vert
+    p.drawString(row4_x, row4_y0 - gap * 3, "Statut du règlement :")
+    
     bx = row4_x + 160
     by = row4_y0 - gap * 3 - 3
-    _rect(p, bx, by, 70, 16, fill=(0.88, 1.00, 0.92), stroke=(0.65, 0.90, 0.70), radius=4)
-    p.setFont("Helvetica-Bold", 9)
-    p.setFillColorRGB(*C_GREEN)
-    p.drawString(bx + 8, by + 4, f"✓  {statut}")
+    _rect(p, bx, by, 70, 16, fill=C_STATUS_BG, stroke=C_STATUS_BORDER, radius=4)
+    p.setFont(F_BOLD, 9)
+    p.setFillColorRGB(*C_STATUS_TEXT)
+    p.drawString(bx + 8, by + 4, str(statut).upper())
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 5 — TEXTE DE CERTIFICATION  (y: 365 → 310)
-    # ═══════════════════════════════════════════════════════
-    cert_y = card4_y - 24    # 354
-
-    _rect(p, margin, cert_y - 44, inner, 56, fill=(0.97, 0.97, 1.00), stroke=C_BORDER, radius=6)
+    # ── SECTION 5 — ENCADRÉ DE CERTIFICATION ──
+    cert_y = card4_y - 24
+    _rect(p, margin, cert_y - 44, inner, 56, fill=C_WHITE, stroke=C_BORDER, radius=6)
 
     p.saveState()
-    p.setFont("Helvetica-BoldOblique", 9)
+    p.setFont(F_REGULAR, 9)
     p.setFillColorRGB(*C_TEXT)
     lines = [
-        f"Ce document certifie que le titulaire est officiellement membre de l'AESM",
-        f"pour l'année académique {annee}. Il lui confère l'accès à l'ensemble des",
-        "services et activités de l'association. Document généré automatiquement.",
+        f"Le présent quitus certifie que le titulaire est officiellement enregistré en tant que membre de l'AESM",
+        f"pour l'année académique {annee}. Il lui confère le plein accès aux services et activités de l'association.",
+        "Ce document administratif est généré automatiquement par le système de gestion.",
     ]
     for i, line in enumerate(lines):
-        p.drawCentredString(W / 2, cert_y - 8 - i * 14, line)
+        p.drawCentredString(W / 2, cert_y - 10 - i * 14, line)
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 6 — QR CODE  (y: 290 → 90)
-    # ═══════════════════════════════════════════════════════
-    qr_sec_y = cert_y - 44 - 20    # 290
+    # ── SECTION 6 — SÉCURITÉ & ANALYSE QR ──
+    qr_sec_y = cert_y - 44 - 20
 
-    # Séparateur pointillé
+    # Ligne de démarcation
     p.saveState()
     p.setStrokeColorRGB(*C_BORDER)
     p.setLineWidth(0.8)
-    p.setDash([5, 4])
+    p.setDash([4, 4])
     p.line(margin, qr_sec_y, W - margin, qr_sec_y)
     p.restoreState()
 
-    # Titre QR
     p.saveState()
-    p.setFont("Helvetica-Bold", 10)
-    p.setFillColorRGB(*C_BLUE_DARK)
-    p.drawCentredString(W / 2, qr_sec_y - 18, "VÉRIFICATION D'AUTHENTICITÉ")
+    p.setFont(F_BOLD, 9)
+    p.setFillColorRGB(*C_SECONDARY)
+    p.drawCentredString(W / 2, qr_sec_y - 18, "CONTRÔLE ET VÉRIFICATION D'AUTHENTICITÉ")
     p.restoreState()
 
-    # QR code centré
-    qr_size = 120
+    qr_size = 110
     qr_x    = (W - qr_size) / 2
-    qr_y    = qr_sec_y - 18 - qr_size - 16   # en dessous du titre
+    qr_y    = qr_sec_y - 18 - qr_size - 12
 
-    # Cadre blanc
-    _rect(p, qr_x - 10, qr_y - 10, qr_size + 20, qr_size + 20,
-          fill=C_WHITE, stroke=C_BORDER, radius=8)
+    # Cadre de protection du QR code
+    _rect(p, qr_x - 10, qr_y - 10, qr_size + 20, qr_size + 20, fill=C_WHITE, stroke=C_BORDER, radius=4)
 
-    # Image QR
+    # Affichage du flux image
     qr_code.seek(0)
     img_reader = ImageReader(BytesIO(qr_code.read()))
-    p.drawImage(img_reader, qr_x, qr_y, width=qr_size, height=qr_size,
-                preserveAspectRatio=True)
+    p.drawImage(img_reader, qr_x, qr_y, width=qr_size, height=qr_size, preserveAspectRatio=True)
 
-    # Texte sous QR
     p.saveState()
-    p.setFont("Helvetica", 8)
+    p.setFont(F_REGULAR, 8)
     p.setFillColorRGB(*C_MUTED)
-    p.drawCentredString(W / 2, qr_y - 18, "Scannez ce QR code pour vérifier l'authenticité du document")
-    p.setFont("Helvetica-Bold", 8)
-    p.setFillColorRGB(*C_BLUE_DARK)
-    p.drawCentredString(W / 2, qr_y - 30, f"Réf. : {transaction_id}")
+    p.drawCentredString(W / 2, qr_y - 16, "Veuillez numériser ce code afin de vérifier la validité des informations.")
+    p.setFont(F_BOLD, 8)
+    p.setFillColorRGB(*C_PRIMARY)
+    p.drawCentredString(W / 2, qr_y - 28, f"Identifiant unique : {transaction_id}")
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
-    # SECTION 7 — PIED DE PAGE  (y: 0 → 52)
-    # ═══════════════════════════════════════════════════════
-    _rect(p, 0, 0, W, 52, fill=C_BLUE_DARK)
+    # ── SECTION 7 — MENTIONS LÉGALES ET PIED DE PAGE ──
+    _rect(p, 0, 0, W, 52, fill=C_PRIMARY)
 
     p.saveState()
-    p.setFont("Helvetica-Bold", 9)
+    p.setFont(F_BOLD, 9)
     p.setFillColorRGB(*C_WHITE)
     p.drawCentredString(W / 2, 36, "AESM — Association des Étudiants en Sociologie de Madagascar")
-    p.setFont("Helvetica", 8)
-    p.setFillColorRGB(*C_BLUE_LIGHT)
-    p.drawCentredString(W / 2, 22, f"Document généré le {date_str}  •  Ce document est officiel et infalsifiable")
-    p.drawCentredString(W / 2, 10, "Université d'Antananarivo  •  Département de Sociologie")
+    p.setFont(F_REGULAR, 8)
+    p.setFillColorRGB(*C_BORDER)
+    p.drawCentredString(W / 2, 22, f"Émis automatiquement le {date_str} • Document officiel infalsifiable")
+    p.drawCentredString(W / 2, 10, "Université d'Antananarivo • Département de Sociologie")
     p.restoreState()
 
-    # ═══════════════════════════════════════════════════════
+    # Finalisation du document
     p.showPage()
     p.save()
 
