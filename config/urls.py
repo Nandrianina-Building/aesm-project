@@ -26,7 +26,6 @@ urlpatterns = [
     path('cr/',include('cr.urls')),
     path('help/', include('help.urls')),
     path('',include('accueil.urls')),
-    path('captcha/', include('captcha.urls')),
 ] + static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT
