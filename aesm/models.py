@@ -15,7 +15,8 @@ class Inscription(models.Model):
     )
     statut =  models.CharField(
         choices=STATUS_CHOICES,
-        default='en_attente'
+        default='en_attente',
+        max_length=20
     )
     
     date_inscription = models.DateTimeField(
