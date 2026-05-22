@@ -57,7 +57,7 @@ class FileCategory(models.Model):
         ('AESM', 'AESM'),
         ('CR', 'Centre de Réflexion'),
     ]
-    section = models.CharField(max_length=10, choices=SECTION_CHOICES)
+    section = models.CharField(max_length=10, choices=SECTION_CHOICES,max_length=20)
     def __str__(self):
          return self.nom
      
@@ -78,7 +78,7 @@ class Files(models.Model):
     date_upload = models.DateTimeField(auto_now_add=True)
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     categorie = models.ForeignKey(FileCategory,on_delete=models.SET_NULL,null=True , blank=True)
-    access = models.CharField(choices=ACCESS_CHOICE , default='public')
+    access = models.CharField(choices=ACCESS_CHOICE , default='public',max_length=20)
     download_count = models.PositiveIntegerField(default=0)
     
     def __str__(self):
