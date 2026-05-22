@@ -25,29 +25,18 @@ urlpatterns = [
         views.dowload_fichierView , 
         name = 'download_fichier_aesm'
     ),
+    
     path(
-    'payement/',
-    views.creer_paiement,
-    name='creer_paiement'
-),
-
-path(
-    'payement/success/',
-    views.paiement_success,
-    name='paiement_success'
-),
-
-path(
-    'payement/cancel/',
-    views.paiement_cancel,
-    name='paiement_cancel'
-),
-
-path(
-    'tokipay/webhook/',
-    views.tokipay_webhook,
-    name='tokipay_webhook'
-),
+        'payement/' , 
+        views.creer_paiement , 
+        name='payement_adhesion'
+    ),
+    
+    path(
+        'payement/success/<str:transaction_id>/', 
+        views.simulation_success, 
+        name='simulation_success'
+    ),
     
     path(
         'dashboard-budget/',
