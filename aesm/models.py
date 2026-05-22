@@ -27,6 +27,7 @@ class Inscription(models.Model):
     
 class Paiement(models.Model):
     STATUT_CHOICES = [
+        ('pending', 'En attente'),
         ('succes' , 'Succès'),
         ('echec' , 'Echec')
     ]
@@ -41,7 +42,8 @@ class Paiement(models.Model):
     )
     statut = models.CharField(
         choices=STATUT_CHOICES,
-        max_length=20
+        max_length=20,
+        default='pending'
     )
     transaction_id = models.CharField(
         max_length=100
