@@ -5,7 +5,7 @@ from cr.models import Publication, Files, Category, FileCategory
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Inscription, Paiement, Quitus, User
+from .models import Inscription, Paiement, Quitus, User , TokiPayPaiement
 from accounts.models import Etudiant
 from .utils import generate_qr_code, generate_pdf
 from django.db.models import Sum
@@ -17,7 +17,20 @@ from functools import wraps
 from django.http import JsonResponse
 from django.http import FileResponse
 
-
+import secrets
+import requests
+import json
+import logging
+ 
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+ 
+ 
+logger = logging.getLogger(__name__)
+ 
+MONTANT_ADHESION = 2000   # Ariary
 
 # =========================
 # HELPER : MEMBRE ACTIF
@@ -337,71 +350,254 @@ def dowload_fichierView(request, fichier_id):
     return FileResponse(fichier.fichier.open(), as_attachment=True)
 
 
+# ───────────────────────────────────────────────────────────────────
+# HELPER — Authentification TokiPay
+# Le token expire dans 1h — on en récupère un frais à chaque paiement.
+# Pour une app à fort trafic, mettre en cache avec django-cache ou Redis.
+# ───────────────────────────────────────────────────────────────────
+ 
+def _get_tokipay_token():
+    '''
+    POST /auth/token → access_token
+    Retourne le token ou lève une exception.
+    '''
+    resp = requests.post(
+        f'{settings.TOKIPAY_BASE_URL}/auth/token',
+        json={
+            'client_id':     settings.TOKIPAY_CLIENT_ID,
+            'client_secret': settings.TOKIPAY_CLIENT_SECRET,
+        },
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()['access_token']
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# HELPER — Finaliser le paiement (Quitus + PDF)
+# ───────────────────────────────────────────────────────────────────
+ 
+def _finaliser(tokipay_paiement):
+    '''
+    Crée le Paiement Django + le Quitus (QR + PDF).
+    Idempotent : si le Quitus existe déjà, ne rien faire.
+    '''
+    inscription = tokipay_paiement.inscription
+    etudiant    = inscription.etudiant
+ 
+    # Idempotence — évite les doublons si le webhook arrive deux fois
+    if Paiement.objects.filter(
+        transaction_id=tokipay_paiement.reference
+    ).exists():
+        return Quitus.objects.get(
+            paiement__transaction_id=tokipay_paiement.reference
+        )
+ 
+    paiement = Paiement.objects.create(
+        inscription=inscription,
+        montant=tokipay_paiement.montant,
+        statut='succes',
+        transaction_id=tokipay_paiement.reference,
+    )
+ 
+    inscription.statut = 'paye'
+    inscription.save()
+ 
+    verification_url = (
+        f"{settings.SITE_URL}/aesm/verify/{tokipay_paiement.reference}/"
+    )
+    qr_file  = generate_qr_code(verification_url)
+    pdf_file = generate_pdf(
+        paiement.transaction_id, qr_file, etudiant, paiement
+    )
+ 
+    quitus = Quitus.objects.create(
+        paiement=paiement,
+        qr_code=qr_file,
+        fichier_pdf=pdf_file,
+    )
+ 
+    tokipay_paiement.statut = 'valide'
+    tokipay_paiement.save()
+ 
+    return quitus
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# VUE 1 — Page de paiement  →  appelle TokiPay  →  redirect
+# ───────────────────────────────────────────────────────────────────
+ 
 @login_required
 def creer_paiement(request):
-
-    etudiant = Etudiant.objects.get(
-        user=request.user
-    )
-
-    inscription = Inscription.objects.get(
-        etudiant=etudiant
-    )
-
-    if inscription.statut == "paye":
+    etudiant    = Etudiant.objects.get(user=request.user)
+    inscription = Inscription.objects.get(etudiant=etudiant)
+ 
+    if inscription.statut == 'paye':
         return redirect('dashboardAesm')
-
-    if request.method == "POST":
-        transaction_id = str(uuid.uuid4())
-
-        paiement = Paiement.objects.create(
+ 
+    if request.method == 'POST':
+        # Référence unique côté AESM
+        reference = f'AESM-{uuid.uuid4().hex[:12].upper()}'
+ 
+        # Sauvegarder AVANT l'appel API pour que le webhook retrouve l'inscription
+        tokipay_obj = TokiPayPaiement.objects.create(
+            reference=reference,
             inscription=inscription,
-            montant=2000,
-            statut='succes',
-            transaction_id=transaction_id
+            montant=MONTANT_ADHESION,
         )
-
-        inscription.statut = 'paye'
-        inscription.save()
-
-        verfification_url = (
-            f"https://nandrianina04.pythonanywhere.com/aesm/verify/{transaction_id}/"
-            
-        )
-
-        qr_file = generate_qr_code(verfification_url)
-        pdf_file = generate_pdf(paiement.transaction_id, qr_file, etudiant)
-
-        Quitus.objects.create(
-            paiement=paiement,
-            qr_code=qr_file,
-            fichier_pdf=pdf_file
-        )
-
-        quitus = Quitus.objects.get(paiement=paiement)
-
-        return render(
-            request,
-            'aesm/paiement_success.html',
-            {'quitus': quitus}
-        )
-
-    return render(request, 'aesm/paiement.html')
-
-
+ 
+        try:
+            # ── ÉTAPE 1 : Obtenir le token ──────────────────────
+            token = _get_tokipay_token()
+ 
+            # ── ÉTAPE 2 : Créer le paiement ─────────────────────
+            resp = requests.post(
+                f'{settings.TOKIPAY_BASE_URL}/payments/checkout',
+                f'{settings.TOKIPAY_BASE_URL}/projects/{settings.TOKIPAY_PROJECT_ID}/checkout'
+                headers={
+                    'Authorization': f'Bearer {token}',
+                    'Content-Type':  'application/json',
+                },
+                json={
+                    'amount':    MONTANT_ADHESION,
+                    'reference': reference,          # external_reference dans le webhook
+                    'lines': [
+                        {
+                            'description': 'Adhésion AESM',
+                            'unit_price':  MONTANT_ADHESION,
+                            'quantity':    1,
+                        }
+                    ],
+                },
+                timeout=10,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+ 
+            # Sauvegarder le payment_id TokiPay
+            tokipay_obj.payment_id = data.get('payment_id', '')
+            tokipay_obj.save()
+ 
+            checkout_url = data['checkout_url']
+ 
+            # ── ÉTAPE 3 : Rediriger vers TokiPay ────────────────
+            return redirect(checkout_url)
+ 
+        except Exception as e:
+            logger.error('TokiPay — erreur création paiement : %s', e)
+            tokipay_obj.statut = 'echec'
+            tokipay_obj.save()
+            return redirect('paiement_echec')
+ 
+    # GET → afficher la page de paiement
+    return render(request, 'aesm/paiement.html', {
+        'montant': MONTANT_ADHESION,
+    })
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# VUE 2 — Retour après paiement (redirect depuis TokiPay)
+# NE PAS finaliser ici — attendre le webhook.
+# ───────────────────────────────────────────────────────────────────
+ 
 @login_required
-def simulation_success(request, transaction_id):
-    paiement = get_object_or_404(
-        Paiement,
-        transaction_id=transaction_id
+def tokipay_retour(request):
+    '''
+    TokiPay redirige l'utilisateur ici après qu'il ait soumis
+    sa preuve de paiement. Le paiement n'est pas encore validé.
+    On affiche une page d'attente.
+    '''
+    return render(request, 'aesm/tokipay_attente.html')
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# VUE 3 — Webhook TokiPay  (POST serveur→serveur)
+# C'est ici que le paiement est officiellement confirmé.
+# ───────────────────────────────────────────────────────────────────
+ 
+@csrf_exempt     # TokiPay n'envoie pas de CSRF token
+@require_POST
+def tokipay_webhook(request):
+    '''
+    TokiPay appelle ce endpoint quand le paiement est validé.
+    Header : X-Client-Secret = ton client_secret
+    Body   : { event, payment: { external_reference, status, ... } }
+    '''
+ 
+    # ── 1. Vérifier l'authenticité via X-Client-Secret ──────────
+    secret_recu = request.headers.get('X-Client-Secret', '')
+    if not secrets.compare_digest(
+        secret_recu,
+        settings.TOKIPAY_CLIENT_SECRET,
+    ):
+        logger.warning('TokiPay webhook — secret invalide')
+        return HttpResponse(status=401)
+ 
+    # ── 2. Parser le body JSON ───────────────────────────────────
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse(status=400)
+ 
+    event   = data.get('event')
+    payment = data.get('payment', {})
+ 
+    logger.info('TokiPay webhook reçu — event=%s', event)
+ 
+    # ── 3. Traiter uniquement payment.validated ──────────────────
+    if event != 'payment.validated':
+        return HttpResponse('event ignoré', status=200)
+ 
+    # external_reference = la reference qu'on a envoyée lors de la création
+    external_reference = payment.get('external_reference')
+    if not external_reference:
+        return HttpResponse(status=400)
+ 
+    # ── 4. Retrouver le paiement TokiPay en DB ──────────────────
+    try:
+        tokipay_obj = TokiPayPaiement.objects.get(
+            reference=external_reference
+        )
+    except TokiPayPaiement.DoesNotExist:
+        logger.error('TokiPay — référence introuvable : %s', external_reference)
+        return HttpResponse(status=404)
+ 
+    # ── 5. Enrichir avec les données du webhook ──────────────────
+    tokipay_obj.provider     = payment.get('provider', '')
+    tokipay_obj.sender_phone = payment.get('sender_phone', '')
+    tokipay_obj.save()
+ 
+    # ── 6. Finaliser le paiement (Quitus + PDF) ──────────────────
+    try:
+        _finaliser(tokipay_obj)
+    except Exception as e:
+        logger.error('TokiPay — finalisation échouée : %s', e)
+        return HttpResponse(status=500)
+ 
+    # ── 7. Retourner 200 dans les 30 secondes ────────────────────
+    return HttpResponse('OK', status=200)
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# VUE 4 — Succès
+# ───────────────────────────────────────────────────────────────────
+ 
+@login_required
+def paiement_success(request, reference):
+    quitus = get_object_or_404(
+        Quitus,
+        paiement__transaction_id=reference,
     )
-    return render(
-        request,
-        'aesm/paiement_success.html',
-        {'paiement': paiement}
-    )
-
-
+    return render(request, 'aesm/paiement_success.html', {'quitus': quitus})
+ 
+ 
+# ───────────────────────────────────────────────────────────────────
+# VUE 5 — Échec
+# ───────────────────────────────────────────────────────────────────
+ 
+@login_required
+def paiement_echec(request):
+    return render(request, 'aesm/paiement_echec.html')
 # =========================
 # DASHBOARD BUDGET — MEMBRES ACTIFS UNIQUEMENT
 # =========================
