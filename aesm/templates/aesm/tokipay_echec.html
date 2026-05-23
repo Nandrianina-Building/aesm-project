@@ -1,0 +1,84 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     TEMPLATE : aesm/tokipay_echec.html
+     Page d'échec de paiement
+     ═══════════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement échoué — AESM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark: #1a1fa8; --blue-mid: #2d35c9; --accent: #6c6fff;
+      --white: #ffffff; --bg: #f4f5f9;
+      --text-primary: #0f1117; --text-muted: #6b7280;
+      --border: #e5e7eb; --radius: 14px; --radius-sm: 8px;
+      --red: #dc2626; --red-bg: #fee2e2; --red-border: #fecaca;
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
+      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    }
+    body { font-family: var(--font-body); background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); width: 100%; max-width: 420px; overflow: hidden; text-align: center; animation: cardIn 0.3s ease; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+ 
+    .card-header { background: linear-gradient(135deg, #991b1b 0%, #dc2626 60%, #f87171 100%); padding: 40px 32px 36px; position: relative; overflow: hidden; }
+    .card-header::after { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.06); border-radius:50%; }
+    .error-icon { width: 64px; height: 64px; background: rgba(255,255,255,0.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; margin: 0 auto 16px; position: relative; }
+    .card-header h1 { font-family: var(--font-head); font-size: 20px; font-weight: 800; color: white; margin-bottom: 6px; position: relative; }
+    .card-header p  { font-size: 13px; color: rgba(255,255,255,0.78); position: relative; }
+ 
+    .card-body { padding: 28px 32px; display: flex; flex-direction: column; gap: 12px; }
+ 
+    .info-box { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--red); text-align: left; }
+    .info-box i { flex-shrink: 0; margin-top: 1px; }
+ 
+    .btn-retry {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px; border-radius: var(--radius-sm);
+      background: var(--blue-dark); color: white;
+      font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.18s;
+    }
+    .btn-retry:hover { background: var(--blue-mid); transform: translateY(-1px); }
+ 
+    .btn-back {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px; border-radius: var(--radius-sm);
+      background: transparent; color: var(--text-primary);
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      border: 1.5px solid var(--border); cursor: pointer; transition: all 0.18s;
+      text-decoration: none;
+    }
+    .btn-back:hover { background: var(--bg); }
+ 
+    @media (max-width: 480px) { .card-header { padding: 28px 20px 24px; } .card-body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="error-icon"><i class="fa fa-xmark"></i></div>
+      <h1>Paiement échoué</h1>
+      <p>Votre paiement n'a pas pu être traité</p>
+    </div>
+    <div class="card-body">
+      <div class="info-box">
+        <i class="fa fa-circle-exclamation"></i>
+        Le paiement a été annulé ou une erreur s'est produite. Votre compte n'a pas été débité.
+      </div>
+      <a href="{% url 'payement_adhesion' %}" class="btn-retry">
+        <i class="fa fa-rotate-right"></i> Réessayer le paiement
+      </a>
+      <a href="{% url 'dashboardAesm' %}" class="btn-back">
+        <i class="fa fa-arrow-left"></i> Retour au tableau de bord
+      </a>
+    </div>
+  </div>
+</body>
+</html>
