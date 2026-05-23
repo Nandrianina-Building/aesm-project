@@ -26,29 +26,17 @@ urlpatterns = [
         name = 'download_fichier_aesm'
     ),
     
-    path('payement/',
-         views.creer_paiement,
-         name='payement_adhesion'),
- 
-    # TokiPay redirige ici après paiement
-    path('payement/retour/',
-         views.tokipay_retour,
-         name='tokipay_retour'),
- 
-    # Webhook TokiPay (POST serveur→serveur)
-    path('payement/webhook/',
-         views.tokipay_webhook,
-         name='tokipay_webhook'),
- 
-    # Succès (après finalisation)
-    path('payement/success/<str:reference>/',
-         views.paiement_success,
-         name='paiement_success'),
- 
-    # Échec / annulation
-    path('payement/echec/',
-         views.paiement_echec,
-         name='paiement_echec'),
+    path(
+        'payement/' , 
+        views.creer_paiement , 
+        name='payement_adhesion'
+    ),
+    
+    path(
+        'payement/success/<str:transaction_id>/', 
+        views.simulation_success, 
+        name='simulation_success'
+    ),
     
     path(
         'dashboard-budget/',
