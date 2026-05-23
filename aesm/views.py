@@ -453,7 +453,6 @@ def creer_paiement(request):
             # ── ÉTAPE 2 : Créer le paiement ─────────────────────
             resp = requests.post(
                 f'{settings.TOKIPAY_BASE_URL}/payments/checkout',
-                f'{settings.TOKIPAY_BASE_URL}/projects/{settings.TOKIPAY_PROJECT_ID}/checkout'
                 headers={
                     'Authorization': f'Bearer {token}',
                     'Content-Type':  'application/json',
