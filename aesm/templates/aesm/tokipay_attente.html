@@ -1,0 +1,189 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     TEMPLATE : aesm/tokipay_attente.html
+     Page d'attente pendant confirmation TokiPay (polling AJAX)
+     ═══════════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmation en cours — AESM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark: #1a1fa8; --blue-mid: #2d35c9; --accent: #6c6fff;
+      --white: #ffffff; --bg: #f4f5f9;
+      --text-primary: #0f1117; --text-muted: #6b7280;
+      --border: #e5e7eb; --radius: 14px; --radius-sm: 8px;
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.10);
+      --font-head: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+    }
+    body {
+      font-family: var(--font-body); background: var(--bg);
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 20px;
+    }
+ 
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow-md); border: 1px solid var(--border);
+      width: 100%; max-width: 420px; overflow: hidden;
+      text-align: center;
+      animation: cardIn 0.3s ease;
+    }
+    @keyframes cardIn { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+ 
+    /* Header bleu */
+    .card-header {
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 60%, var(--accent) 100%);
+      padding: 40px 32px 36px; position: relative; overflow: hidden;
+    }
+    .card-header::after { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.06); border-radius:50%; }
+ 
+    /* Spinner animé */
+    .spinner-wrap { margin: 0 auto 16px; width: 64px; height: 64px; position: relative; }
+    .spinner-ring {
+      position: absolute; inset: 0;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .spinner-ring:nth-child(2) {
+      inset: 8px;
+      border-width: 2.5px;
+      border-color: rgba(255,255,255,0.15);
+      border-top-color: rgba(255,255,255,0.70);
+      animation-duration: 1.4s;
+      animation-direction: reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+ 
+    .card-header h1 { font-family: var(--font-head); font-size: 20px; font-weight: 800; color: white; margin-bottom: 6px; position: relative; }
+    .card-header p  { font-size: 13px; color: rgba(255,255,255,0.72); position: relative; }
+ 
+    /* Body */
+    .card-body { padding: 28px 32px 24px; }
+ 
+    .step-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .step {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--bg);
+      font-size: 13.5px; font-weight: 500; color: var(--text-muted);
+      transition: all 0.3s;
+    }
+    .step.done    { border-color: #bbf7d0; background: #dcfce7; color: #15803d; }
+    .step.active  { border-color: #c7cbf9; background: #e8eaff; color: var(--blue-mid); }
+    .step .step-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .step.done   .step-icon { background: #dcfce7; color: #15803d; }
+    .step.active .step-icon { background: #e8eaff; color: var(--blue-mid); }
+    .step.pending .step-icon { background: var(--bg); color: var(--text-muted); }
+ 
+    .step-spin { animation: spin 1s linear infinite; }
+ 
+    /* Status message */
+    .status-msg {
+      font-size: 13px; color: var(--text-muted);
+      padding: 10px 16px; background: var(--bg);
+      border-radius: var(--radius-sm); margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .status-msg strong { color: var(--text-primary); }
+ 
+    /* Bouton annuler */
+    .btn-cancel {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%; padding: 11px; border-radius: var(--radius-sm);
+      background: transparent; color: var(--text-muted);
+      font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+      border: 1.5px solid var(--border); cursor: pointer; transition: all 0.18s;
+      text-decoration: none;
+    }
+    .btn-cancel:hover { background: var(--bg); color: var(--text-primary); }
+ 
+    @media (max-width: 480px) {
+      .card-header { padding: 28px 20px 24px; }
+      .card-body   { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="spinner-wrap">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <h1>Confirmation en cours</h1>
+      <p>Votre paiement est en cours de vérification</p>
+    </div>
+ 
+    <div class="card-body">
+      <div class="step-list">
+        <div class="step done" id="step1">
+          <div class="step-icon"><i class="fa fa-check"></i></div>
+          Paiement soumis sur TokiPay
+        </div>
+        <div class="step active" id="step2">
+          <div class="step-icon"><i class="fa fa-rotate step-spin"></i></div>
+          Confirmation en attente…
+        </div>
+        <div class="step pending" id="step3">
+          <div class="step-icon"><i class="fa fa-file-pdf"></i></div>
+          Génération du quitus
+        </div>
+      </div>
+ 
+      <div class="status-msg" id="statusMsg">
+        Vérification en cours, <strong>ne fermez pas cette page</strong>.
+      </div>
+ 
+      <a href="{% url 'dashboardAesm' %}" class="btn-cancel">
+        <i class="fa fa-arrow-left"></i> Retour au tableau de bord
+      </a>
+    </div>
+  </div>
+ 
+  <script>
+    const orderId   = "{{ order_id }}";
+    const statusUrl = `/aesm/payement/tokipay/statut/${orderId}/`;
+    const msg       = document.getElementById('statusMsg');
+    let   attempts  = 0;
+    const maxAttempts = 30;  // 30 × 2s = 60s max
+ 
+    function poll() {
+      if (attempts >= maxAttempts) {
+        msg.innerHTML = "La confirmation prend plus de temps que prévu. <br>Vérifiez votre espace membre dans quelques minutes.";
+        return;
+      }
+      attempts++;
+ 
+      fetch(statusUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.json())
+        .then(data => {
+          if (data.statut === 'confirme') {
+            // Paiement confirmé → étape 3 active
+            document.getElementById('step2').className = 'step done';
+            document.getElementById('step2').innerHTML = '<div class="step-icon"><i class="fa fa-check"></i></div> Paiement confirmé';
+            document.getElementById('step3').className = 'step active';
+            document.getElementById('step3').innerHTML = '<div class="step-icon"><i class="fa fa-rotate step-spin"></i></div> Génération du quitus…';
+            msg.innerHTML = "<strong>Paiement confirmé !</strong> Redirection en cours…";
+            setTimeout(() => { window.location.href = data.redirect_url; }, 1000);
+          } else {
+            // Toujours en attente
+            setTimeout(poll, 2000);
+          }
+        })
+        .catch(() => { setTimeout(poll, 3000); });
+    }
+ 
+    // Démarrer le polling après 1 seconde
+    setTimeout(poll, 1000);
+  </script>
+</body>
+</html>
