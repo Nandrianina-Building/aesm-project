@@ -11,11 +11,26 @@ from .utils import generate_qr_code, generate_pdf
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from .models import LigneBudget
-from django.http import JsonResponse
 from django.template.loader import render_to_string
 from functools import wraps
 from django.http import JsonResponse
 from django.http import FileResponse
+
+import secrets
+import requests
+import json
+import logging
+ 
+from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from .utils_pdf import generate_pdf, generate_qr_code
+ 
+logger = logging.getLogger(__name__)
+ 
+MONTANT_ADHESION = 2000   # Ariary
+ 
 
 
 
