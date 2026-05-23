@@ -53,8 +53,42 @@ class Paiement(models.Model):
     payment_url = models.URLField(blank=True)
     def __str__(self):
         return f"Payement de {self.transaction_id}"
-    
-
+ 
+ 
+class TokiPayPaiement(models.Model):
+    '''
+    Stocke chaque tentative de paiement TokiPay.
+    Permet de retrouver l'inscription depuis le webhook
+    sans dépendre de la session Django.
+    '''
+    reference      = models.CharField(max_length=100, unique=True)   # order ID AESM
+    payment_id     = models.CharField(max_length=200, blank=True)    # ID retourné par TokiPay
+    inscription    = models.ForeignKey(
+        'Inscription', on_delete=models.CASCADE,
+        related_name='tokipay_paiements'
+    )
+    montant        = models.PositiveIntegerField(default=2000)
+    statut         = models.CharField(
+        max_length=20,
+        choices=[
+            ('en_attente', 'En attente'),
+            ('valide',     'Validé'),
+            ('echec',      'Échoué'),
+        ],
+        default='en_attente'
+    )
+    provider       = models.CharField(max_length=30, blank=True)     # mvola / orange_money
+    sender_phone   = models.CharField(max_length=20, blank=True)
+    cree_le        = models.DateTimeField(auto_now_add=True)
+    mis_a_jour_le  = models.DateTimeField(auto_now=True)
+ 
+    def __str__(self):
+        return f'{self.reference} — {self.statut}'
+ 
+    class Meta:
+        verbose_name        = 'Paiement TokiPay'
+        verbose_name_plural = 'Paiements TokiPay'
+        
 class Quitus(models.Model):
     paiement = models.OneToOneField(
         Paiement,
