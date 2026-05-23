@@ -1,4 +1,6 @@
 from pathlib import Path
+from decouple import config
+ 
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,6 +10,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # =========================
 
+TOKIPAY_CLIENT_ID     = config('TOKIPAY_CLIENT_ID')
+TOKIPAY_CLIENT_SECRET = config('TOKIPAY_CLIENT_SECRET')
+TOKIPAY_BASE_URL      = 'https://api.tokipay.app/api'
+SITE_URL              = config('SITE_URL', default='http://localhost:8000')
 SECRET_KEY = 'django-insecure-CHANGE-ME'
 
 DEBUG = False
