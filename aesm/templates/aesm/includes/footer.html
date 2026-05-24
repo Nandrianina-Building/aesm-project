@@ -1,0 +1,275 @@
+<!-- templates/includes/footer.html -->
+<!-- Usage : {% include 'includes/footer.html' %} en bas de chaque page -->
+
+<footer class="footer">
+  <div class="footer-inner">
+
+    <!-- ── Colonne 1 : Brand ── -->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">AC</div>
+        <span class="footer-logo-name">AESM &amp; CR</span>
+      </div>
+      <p class="footer-tagline">
+        Association des Étudiants en Sociologie de Madagascar
+      </p>
+      <p class="footer-sub">
+        Université d'Antananarivo — Département de Sociologie
+      </p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn" aria-label="Facebook">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-btn" aria-label="Instagram">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a href="mailto:aesm@gmail.com" class="social-btn" aria-label="Email">
+          <i class="fa fa-envelope"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Colonne 2 : Navigation AESM ── -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">AESM</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'dashboardAesm' %}"><i class="fa fa-gauge-high"></i> Tableau de bord</a></li>
+        <li><a href="{% url 'publication_easm' %}"><i class="fa fa-newspaper"></i> Publications</a></li>
+        <li><a href="{% url 'list_fichier_aesm' %}"><i class="fa fa-folder-open"></i> Fichiers &amp; Ressources</a></li>
+        <li><a href="{% url 'dashboard_budget' %}"><i class="fa fa-chart-pie"></i> Budget</a></li>
+        <li><a href="{% url 'instructions_faq' %}"><i class="fa fa-circle-question"></i> Aide &amp; FAQ</a></li>
+      </ul>
+    </div>
+
+    <!-- ── Colonne 3 : Centre de Réflexion ── -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Centre de Réflexion</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Accueil CR</a></li>
+        <li><a href="{% url 'publication_cr' %}"><i class="fa fa-file-lines"></i> Publications académiques</a></li>
+        <li><a href="{% url 'list_fichier' %}"><i class="fa fa-download"></i> Ressources pédagogiques</a></li>
+      </ul>
+
+      <h4 class="footer-col-title" style="margin-top:20px;">Compte</h4>
+      <ul class="footer-links">
+        {% if request.user.is_authenticated %}
+        <li><a href="{% url 'dashboardAesm' %}#account"><i class="fa fa-user"></i> Mon profil</a></li>
+        <li><a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a></li>
+        {% else %}
+        <li><a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a></li>
+        <li><a href="{% url 'account_signup' %}"><i class="fa fa-user-plus"></i> Inscription</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- ── Colonne 4 : Contact & Accès rapide ── -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Contact</h4>
+      <ul class="footer-links footer-contact">
+        <li>
+          <i class="fa fa-location-dot"></i>
+          <span>Université d'Antananarivo, Madagascar</span>
+        </li>
+        <li>
+          <i class="fa fa-envelope"></i>
+          <span>aesm@gmail.com</span>
+        </li>
+      </ul>
+
+      {% if request.user.is_authenticated %}
+      <div class="footer-badge-wrap">
+        <div class="footer-badge">
+          <i class="fa fa-circle-check"></i>
+          Connecté en tant que <strong>{{ request.user.username }}</strong>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'payement_adhesion' %}" class="footer-cta">
+        <i class="fa fa-credit-card"></i> Adhérer à l'AESM
+      </a>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- ── Bottom bar ── -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© {% now "Y" %} AESM — Tous droits réservés</span>
+      <div class="footer-bottom-links">
+        <a href="{% url 'instructions_faq' %}">Aide</a>
+        <span class="sep">·</span>
+        <a href="{% url 'admin:index' %}">Administration</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ── STYLES FOOTER ── -->
+<!-- Ajouter dans votre CSS global ou dans un bloc <style> de base.html -->
+<style>
+  .footer {
+    background: #0f1117;
+    color: rgba(255,255,255,0.70);
+    font-family: 'DM Sans', sans-serif;
+    margin-top: auto;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 52px 28px 40px;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+
+  /* ── Brand ── */
+  .footer-logo {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .footer-logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #2d35c9, #6c6fff);
+    color: white; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .footer-logo-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 800; color: white;
+  }
+  .footer-tagline {
+    font-size: 13px; line-height: 1.6;
+    color: rgba(255,255,255,0.65); margin-bottom: 5px;
+  }
+  .footer-sub {
+    font-size: 12px; color: rgba(255,255,255,0.40);
+    margin-bottom: 18px;
+  }
+  .footer-socials {
+    display: flex; gap: 10px;
+  }
+  .social-btn {
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    transition: all 0.18s;
+  }
+  .social-btn:hover {
+    background: #2d35c9;
+    border-color: #2d35c9;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* ── Colonnes ── */
+  .footer-col-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.10em;
+    color: rgba(255,255,255,0.90);
+    margin-bottom: 14px;
+  }
+  .footer-links {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .footer-links li a,
+  .footer-links li {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13.5px; color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+  .footer-links li a:hover { color: white; }
+  .footer-links li i {
+    font-size: 12px; width: 14px;
+    color: rgba(255,255,255,0.35);
+    flex-shrink: 0;
+  }
+  .footer-links li a:hover i { color: #6c6fff; }
+
+  /* Contact */
+  .footer-contact li {
+    align-items: flex-start;
+  }
+  .footer-contact li i { margin-top: 2px; }
+  .footer-contact li span { font-size: 13px; line-height: 1.5; }
+
+  /* Badge connecté */
+  .footer-badge-wrap { margin-top: 16px; }
+  .footer-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 500;
+    background: rgba(22,163,74,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(22,163,74,0.25);
+  }
+  .footer-badge strong { color: white; }
+
+  /* CTA Adhésion */
+  .footer-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; margin-top: 16px;
+    border-radius: 8px;
+    background: #2d35c9; color: white;
+    font-size: 13.5px; font-weight: 700;
+    text-decoration: none;
+    transition: all 0.18s;
+    border: none; cursor: pointer;
+  }
+  .footer-cta:hover {
+    background: #3d48e5; transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(45,53,201,0.40);
+  }
+
+  /* ── Bottom bar ── */
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-bottom-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 16px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+    font-size: 12.5px; color: rgba(255,255,255,0.35);
+  }
+  .footer-bottom-links {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-bottom-links a {
+    color: rgba(255,255,255,0.40); text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-bottom-links a:hover { color: rgba(255,255,255,0.80); }
+  .footer-bottom-links .sep { color: rgba(255,255,255,0.20); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+      padding: 36px 20px 28px;
+      gap: 28px;
+    }
+    .footer-brand { grid-column: auto; }
+    .footer-bottom-inner {
+      flex-direction: column; text-align: center; gap: 6px;
+      padding: 14px 20px;
+    }
+  }
+</style>
