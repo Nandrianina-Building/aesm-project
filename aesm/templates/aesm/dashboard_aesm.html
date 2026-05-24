@@ -204,6 +204,13 @@
         >
           <i class="fa fa-right-to-bracket"></i> Connexion
         </a>
+        <a
+          href="{% url '' %}"
+          class="btn btn-outline"
+          style="width: auto; padding: 7px 16px ;background : #2d35c9"
+        >
+          <i class="fa fa-user-plus"></i> Inscription
+        </a>
         {% endif %}
       </div>
 
@@ -229,6 +236,9 @@
       {% else %}
       <a href="{% url 'account_login' %}"
         ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+      <a href="{% url 'account_signup' %}"
+        ><i class="fa fa-user-plus"></i> Inscription</a
       >
       {% endif %}
     </div>
