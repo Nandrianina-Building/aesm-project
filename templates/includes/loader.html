@@ -1,0 +1,224 @@
+
+
+{% load static %}
+
+<!-- ── LOADER OVERLAY ── -->
+<div id="aesm-loader">
+
+  <!-- Cercle extérieur rotatif inspiré du logo -->
+  <div class="ld-ring ld-ring-outer"></div>
+  <div class="ld-ring ld-ring-inner"></div>
+
+  <!-- Logo AESM centré -->
+  <div class="ld-center">
+    <img
+      src="{% static 'images/favicon.png' %}"
+      alt="AESM"
+      class="ld-logo"
+    />
+    <!-- Halo bleu pulsant autour du logo -->
+    <div class="ld-halo"></div>
+  </div>
+
+  <!-- Texte sous le logo -->
+  <div class="ld-text">
+    <span class="ld-title">AESM</span>
+    <div class="ld-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+</div>
+
+<style>
+/* ── Variables ── */
+:root {
+  --ld-blue:   #1a1fa8;
+  --ld-mid:    #2d35c9;
+  --ld-accent: #6c6fff;
+  --ld-bg:     #0a0b1a;
+}
+
+/* ── Overlay ── */
+#aesm-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: var(--ld-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+
+  /* Disparaît avec une transition fluide */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.55s ease, visibility 0.55s ease;
+}
+
+#aesm-loader.ld-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── Anneaux rotatifs ── */
+.ld-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ld-ring-outer {
+  width: 180px; height: 180px;
+  border-top-color:   var(--ld-accent);
+  border-right-color: rgba(108,111,255,0.25);
+  border-bottom-color: rgba(108,111,255,0.08);
+  border-left-color:  rgba(108,111,255,0.50);
+  animation: ld-spin-cw 1.8s linear infinite;
+}
+
+.ld-ring-inner {
+  width: 140px; height: 140px;
+  border-top-color:   transparent;
+  border-right-color: var(--ld-mid);
+  border-bottom-color: rgba(45,53,201,0.30);
+  border-left-color:  transparent;
+  animation: ld-spin-ccw 1.2s linear infinite;
+}
+
+@keyframes ld-spin-cw  { to { transform: translate(-50%,-50%) rotate(360deg);  } }
+@keyframes ld-spin-ccw { to { transform: translate(-50%,-50%) rotate(-360deg); } }
+
+/* ── Centre ── */
+.ld-center {
+  position: relative;
+  width: 96px; height: 96px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+}
+
+/* Logo photo */
+.ld-logo {
+  width: 86px; height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative; z-index: 2;
+  animation: ld-breathe 2.4s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(108,111,255,0.30),
+              0 0 24px rgba(26,31,168,0.60);
+}
+
+@keyframes ld-breathe {
+  0%,100% { transform: scale(1);    box-shadow: 0 0 0 3px rgba(108,111,255,0.30), 0 0 24px rgba(26,31,168,0.60); }
+  50%      { transform: scale(1.05);box-shadow: 0 0 0 6px rgba(108,111,255,0.15), 0 0 40px rgba(26,31,168,0.90); }
+}
+
+/* Halo pulsant */
+.ld-halo {
+  position: absolute; inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,53,201,0.18) 0%, transparent 70%);
+  animation: ld-pulse 2.4s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes ld-pulse {
+  0%,100% { opacity: 0.5; transform: scale(1);    }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+
+/* ── Texte ── */
+.ld-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.ld-title {
+  font-family: 'Syne', 'Arial Black', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  /* Shimmer animation */
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.40) 0%,
+    rgba(255,255,255,1.00) 40%,
+    rgba(108,111,255,1.00) 60%,
+    rgba(255,255,255,0.40) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ld-shimmer 2.2s linear infinite;
+}
+
+@keyframes ld-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* Trois points animés */
+.ld-dots {
+  display: flex; gap: 8px;
+}
+.ld-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ld-accent);
+  animation: ld-bounce 1.2s ease-in-out infinite;
+}
+.ld-dots span:nth-child(1) { animation-delay: 0s;    }
+.ld-dots span:nth-child(2) { animation-delay: 0.2s;  }
+.ld-dots span:nth-child(3) { animation-delay: 0.4s;  }
+
+@keyframes ld-bounce {
+  0%,80%,100% { transform: scale(0.6); opacity: 0.4; }
+  40%          { transform: scale(1.2); opacity: 1;   }
+}
+
+/* ── Barre de progression en bas ── */
+#aesm-loader::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ld-blue), var(--ld-accent), var(--ld-blue));
+  background-size: 200% auto;
+  animation: ld-progress 1.8s linear infinite,
+             ld-shimmer   1.8s linear infinite;
+  width: 100%;
+}
+</style>
+
+<script>
+  // Masquer le loader quand la page est complètement chargée
+  window.addEventListener('load', function () {
+    // Petit délai pour que l'animation soit visible au moins 0.6s
+    const loader = document.getElementById('aesm-loader');
+    const shown  = Date.now();
+    const minDuration = 800; // ms minimum d'affichage
+
+    function hide() {
+      loader.classList.add('ld-hidden');
+      // Supprimer du DOM après la transition
+      setTimeout(() => loader.remove(), 600);
+    }
+
+    const elapsed = Date.now() - shown;
+    if (elapsed >= minDuration) {
+      hide();
+    } else {
+      setTimeout(hide, minDuration - elapsed);
+    }
+  });
+</script>
