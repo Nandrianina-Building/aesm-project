@@ -250,6 +250,8 @@
   {{ recettes_categories|json_script:"recettes-data" }}
   {{ depenses_categories|json_script:"depenses-data" }}
 
+  
+ {% include 'includes/footer.html' %}
   <script src="{% static 'js/dashboard_budget.js' %}"></script>
 </body>
 </html>
