@@ -2,954 +2,544 @@
 {% load static %}
 <!doctype html>
 <html lang="fr">
-  <head>
+<head>
     {% include 'includes/favicon.html' %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard AESM</title>
+    <title>Dashboard AESM | Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
     <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      :root {
-        --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-        --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);
-        
-        --bg: #f8fafc;
-        --card-bg: rgba(255, 255, 255, 0.85);
-        --white: #ffffff;
-        
-        --text-primary: #0f172a;
-        --text-muted: #64748b;
-        --text-light: #94a3b8;
-        --border: rgba(226, 232, 240, 0.8);
-        
-        --radius-lg: 20px;
-        --radius-md: 14px;
-        --radius-sm: 10px;
-        
-        --shadow-sm: 0 2px 8px -1px rgba(15, 23, 42, 0.05);
-        --shadow-md: 0 12px 34px -4px rgba(15, 23, 42, 0.08);
-        --shadow-lg: 0 20px 40px -4px rgba(29, 78, 216, 0.15);
-        
-        --font-body: "Plus Jakarta Sans", sans-serif;
-        --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      body {
-        font-family: var(--font-body);
-        background: var(--bg);
-        color: var(--text-primary);
-        font-size: 15px;
-        line-height: 1.6;
-        min-height: 100vh;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* ── HEADER & NAVBAR ── */
-      .navbar {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
-        padding: 0 32px;
-        height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        transition: var(--transition-smooth);
-      }
-
-      .navbar-left {
-        display: flex;
-        align-items: center;
-        gap: 40px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 19px;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .brand-icon {
-        width: 42px;
-        height: 42px;
-        background: var(--primary-gradient);
-        color: white;
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 700;
-        -webkit-text-fill-color: initial;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .nav-links a {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-muted);
-        transition: var(--transition-smooth);
-      }
-
-      .nav-links a:hover {
-        background: rgba(37, 99, 235, 0.05);
-        color: #2563eb;
-      }
-
-      .nav-links a.active {
-        background: #0f172a;
-        color: var(--white);
-      }
-
-      .navbar-right {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .btn-logout, .btn-nav-action {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 18px;
-        border-radius: var(--radius-sm);
-        font-size: 14px;
-        font-weight: 600;
-        transition: var(--transition-smooth);
-        border: none;
-        cursor: pointer;
-      }
-
-      .btn-nav-outline {
-        background: transparent;
-        color: var(--text-primary);
-        border: 1.5px solid #e2e8f0;
-      }
-
-      .btn-nav-outline:hover {
-        background: #f1f5f9;
-        border-color: var(--text-light);
-      }
-
-      /* HAMBURGER */
-      .hamburger {
-        display: none;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 24px;
-        height: 16px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        z-index: 110;
-      }
-
-      .hamburger span {
-        width: 100%;
-        height: 2px;
-        background-color: var(--text-primary);
-        border-radius: 2px;
-        transition: var(--transition-smooth);
-      }
-
-      .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-      .hamburger.open span:nth-child(2) { opacity: 0; }
-      .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-      /* MOBILE OVERLAY MENU */
-      .mobile-menu {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(255, 255, 255, 0.98);
-        z-index: 105;
-        padding: 100px 24px 40px;
-        flex-direction: column;
-        gap: 12px;
-        opacity: 0;
-        pointer-events: none;
-        transition: var(--transition-smooth);
-        transform: translateY(-20px);
-      }
-
-      .mobile-menu.open {
-        display: flex;
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(0);
-      }
-
-      .mobile-menu a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px;
-        border-radius: var(--radius-md);
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text-primary);
-        background: #f8fafc;
-        transition: var(--transition-smooth);
-      }
-
-      .mobile-menu a.active {
-        background: var(--primary-gradient);
-        color: var(--white);
-      }
-
-      /* ── HERO SECTION ── */
-      .hero {
-        background: var(--hero-gradient);
-        padding: 64px 32px 120px;
-        position: relative;
-        overflow: hidden;
-        color: var(--white);
-        text-align: left;
-      }
-
-      .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
-        opacity: 0.15;
-        mix-blend-mode: overlay;
-      }
-
-      .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 2;
-      }
-
-      .hero h1 {
-        font-size: clamp(28px, 4vw, 44px);
-        font-weight: 800;
-        letter-spacing: -1px;
-        margin-bottom: 12px;
-        animation: fadeInUp 0.8s ease;
-      }
-
-      .hero p {
-        font-size: clamp(14px, 2vw, 17px);
-        color: rgba(255, 255, 255, 0.75);
-        max-width: 600px;
-        animation: fadeInUp 1s ease;
-      }
-
-      /* ── MAIN CONTENT WRAPPER ── */
-      .main-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 24px 64px;
-      }
-
-      /* ── STAT CARDS GRID ── */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-top: -60px;
-        position: relative;
-        z-index: 10;
-      }
-
-      .stat-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-radius: var(--radius-lg);
-        padding: 24px;
-        box-shadow: var(--shadow-md);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: var(--transition-smooth);
-        animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-      }
-
-      .stat-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: var(--shadow-lg);
-        border-color: rgba(37, 99, 235, 0.3);
-      }
-
-      .stat-card-info {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .stat-card-label {
-        font-size: 13px;
-        color: var(--text-muted);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .stat-card-value {
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--text-primary);
-        letter-spacing: -0.5px;
-      }
-
-      .stat-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: var(--radius-md);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        transition: var(--transition-smooth);
-      }
-
-      .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(5deg);
-      }
-
-      .stat-icon.blue { background: #eff6ff; color: #2563eb; }
-      .stat-icon.green { background: #f0fdf4; color: #16a34a; }
-      .stat-icon.purple { background: #faf5ff; color: #9333ea; }
-      .stat-icon.orange { background: #fff7ed; color: #ea580c; }
-
-      /* ── TAB BAR ── */
-      .tabs-container {
-        overflow-x: auto;
-        margin-top: 40px;
-        padding-bottom: 4px;
-      }
-      .tabs-container::-webkit-scrollbar { display: none; }
-
-      .tabs-bar {
-        display: flex;
-        gap: 8px;
-        width: max-content;
-      }
-
-      .tab-btn {
-        padding: 10px 24px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        background: var(--white);
-        font-family: var(--font-body);
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: var(--transition-smooth);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .tab-btn:hover {
-        background: #f8fafc;
-        color: var(--text-primary);
-        border-color: var(--text-light);
-      }
-
-      .tab-btn.active {
-        background: #0f172a;
-        border-color: #0f172a;
-        color: var(--white);
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-      }
-
-      /* ── SECTIONS ARCHITECTURE ── */
-      .section {
-        display: none;
-        opacity: 0;
-        transform: translateY(15px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
-      }
-
-      .section.active {
-        display: block;
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* ── GRID SYSTEM ── */
-      .content-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-        margin-top: 32px;
-      }
-
-      .content-card {
-        background: var(--white);
-        border-radius: var(--radius-lg);
-        padding: 32px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .content-card.full { grid-column: 1 / -1; }
-
-      .content-card-image {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        border-radius: var(--radius-md);
-        margin-bottom: 20px;
-      }
-
-      .content-card h2 {
-        font-size: 19px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .content-card > p {
-        font-size: 14.5px;
-        color: var(--text-muted);
-        margin-bottom: 24px;
-      }
-
-      /* ── INTERACTIVE BUTTONS ── */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border-radius: var(--radius-md);
-        font-family: var(--font-body);
-        font-size: 14.5px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: var(--transition-smooth);
-        border: none;
-        justify-content: center;
-      }
-
-      .btn-outline {
-        background: var(--white);
-        border: 1.5px solid #e2e8f0;
-        color: var(--text-primary);
-      }
-
-      .btn-outline:hover {
-        background: #f8fafc;
-        border-color: var(--text-light);
-        transform: translateY(-2px);
-      }
-
-      .btn-primary {
-        background: var(--primary-gradient);
-        color: var(--white);
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-      }
-
-      /* ── MODERN COMPONENT : LISTS ── */
-      .pub-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .pub-item {
-        padding: 18px 24px;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-        background: #f8fafc;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        transition: var(--transition-smooth);
-      }
-
-      .pub-item:hover {
-        transform: translateX(4px);
-        border-color: #2563eb;
-        background: var(--white);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .pub-item-info h3 {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 4px;
-      }
-
-      .pub-item-info p {
-        font-size: 12.5px;
-        color: var(--text-muted);
-      }
-
-      /* ── ACCOUNT ARCHITECTURE ── */
-      .info-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-top: 24px;
-      }
-
-      .info-item {
-        background: #f8fafc;
-        border-radius: var(--radius-md);
-        padding: 16px 20px;
-        border: 1px solid var(--border);
-      }
-
-      .info-item .label {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-muted);
-        margin-bottom: 6px;
-      }
-
-      .info-item .value {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      /* CREDIT CARD LUXE STYLE */
-      .payment-card {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: white;
-        border-radius: var(--radius-lg);
-        padding: 32px;
-        margin-top: 32px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: var(--shadow-lg);
-      }
-
-      .payment-card::after {
-        content: "";
-        position: absolute;
-        bottom: -40px;
-        right: -40px;
-        width: 180px;
-        height: 180px;
-        background: rgba(37, 99, 235, 0.15);
-        border-radius: 50%;
-        filter: blur(20px);
-      }
-
-      .payment-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin: 24px 0;
-      }
-
-      /* BADGES & STATES */
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 999px;
-        font-size: 12.5px;
-        font-weight: 600;
-      }
-
-      .badge-green { background: #dcfce7; color: #16a34a; }
-      .badge-gray { background: #f1f5f9; color: #475569; }
-
-      .empty-state {
-        text-align: center;
-        padding: 48px 24px;
-        color: var(--text-muted);
-      }
-
-      .empty-state i {
-        font-size: 44px;
-        margin-bottom: 16px;
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      /* ── ANIMATIONS ── */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --bg-body: #f8faff;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08);
+            --radius-xl: 24px;
+            --radius-lg: 16px;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
-      }
 
-      /* ── PLATFORM RESPONSIVE OPTIMIZATIONS ── */
-      @media (max-width: 1024px) {
-        .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      }
-
-      @media (max-width: 768px) {
-        .nav-links, .navbar-right { display: none; }
-        .hamburger { display: flex; }
-        .mobile-menu { display: flex; }
-        
-        .navbar { padding: 0 20px; height: 64px; }
-        .hero { padding: 48px 20px 90px; }
-        .main-wrapper { padding: 0 16px 48px; }
-        
-        .stats-grid { 
-          grid-template-columns: repeat(2, 1fr); 
-          gap: 12px; 
-          margin-top: -45px; 
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .stat-card { padding: 16px; border-radius: var(--radius-md); }
-        .stat-card-value { font-size: 24px; }
-        
-        .content-grid { grid-template-columns: 1fr; gap: 16px; }
-        .info-grid, .payment-grid { grid-template-columns: 1fr; }
-        
-        .pub-item { flex-direction: column; align-items: flex-start; gap: 14px; }
-        .pub-item .btn-sm { width: 100%; text-align: center; justify-content: center; }
-      }
 
-      @media (max-width: 480px) {
-        .stats-grid { grid-template-columns: 1fr; }
-        .tabs-bar { gap: 4px; }
-        .tab-btn { padding: 8px 16px; font-size: 13px; }
-      }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ── NAVBAR MODERNISÉE ── */
+        .navbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 0 5%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav-links { display: flex; gap: 8px; }
+
+        .nav-links a {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover { color: var(--primary); background: rgba(67, 97, 238, 0.05); }
+
+        .nav-links a.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+
+        /* ── HERO SECTION ── */
+        .hero {
+            padding: 60px 5% 100px;
+            background: radial-gradient(circle at top right, #e0e7ff, transparent),
+                        radial-gradient(circle at bottom left, #f1f5f9, transparent);
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #1e293b, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* ── DASHBOARD LAYOUT ── */
+        .main-wrapper {
+            max-width: 1300px;
+            margin: -50px auto 0;
+            padding: 0 20px 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            transition: 0.3s;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+
+        .stat-card-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+        .stat-card-value { font-size: 2rem; font-weight: 800; color: var(--text-main); display: block; }
+
+        .stat-icon {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .blue { background: #eef2ff; color: #4361ee; }
+        .green { background: #f0fdf4; color: #22c55e; }
+        .purple { background: #faf5ff; color: #a855f7; }
+        .orange { background: #fff7ed; color: #f97316; }
+
+        /* TABS SCROLLABLE (Mobile Friendly) */
+        .tabs-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin-bottom: 25px;
+            scrollbar-width: none;
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+
+        .tabs-bar { display: inline-flex; gap: 10px; background: #edeff5; padding: 6px; border-radius: 16px; }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        /* CARDS */
+        .content-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease-out both;
+        }
+
+        .content-card h2 { font-size: 1.3rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        /* PUBLICATIONS LIST */
+        .pub-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #f8faff;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .pub-item:hover { border-color: var(--primary-light); background: white; }
+
+        .pub-item-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+
+        /* BUTTONS */
+        .btn {
+            border-radius: 14px;
+            padding: 12px 24px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); transform: scale(1.02); }
+
+        .btn-outline { background: white; border: 2px solid #e2e8f0; color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* MOBILE HAMBURGER */
+        .hamburger { display: none; background: #f1f5f9; border: none; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 850px) {
+            .nav-links, .navbar-right { display: none; }
+            .hamburger { display: block; }
+            .hero { padding: 40px 5% 80px; }
+            .main-wrapper { margin-top: -40px; }
+            .stat-card-value { font-size: 1.6rem; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ANIMATED MOBILE MENU */
+        .mobile-menu {
+            position: fixed; top: 0; right: -100%; width: 80%; height: 100vh;
+            background: white; z-index: 2000; padding: 40px 24px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        }
+        .mobile-menu.open { right: 0; }
+        .menu-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
+            z-index: 1999; display: none; backdrop-filter: blur(4px);
+        }
+        .mobile-menu a {
+            display: flex; align-items: center; gap: 15px;
+            padding: 16px; font-size: 1.1rem; font-weight: 700;
+            color: var(--text-main); border-radius: 14px; margin-bottom: 8px;
+        }
+        .mobile-menu a.active { background: var(--primary); color: white; }
+
+        /* ACCOUNT STYLING */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .info-item { background: #f8faff; padding: 16px; border-radius: 14px; border: 1px solid #e2e8f0; }
+        .info-item .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 5px; }
+        .info-item .value { font-weight: 800; color: var(--text-main); }
+
+        .payment-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border-radius: 20px; padding: 25px; margin-top: 25px;
+            position: relative; overflow: hidden;
+        }
+        .payment-card::before {
+            content: ''; position: absolute; top: -20%; right: -10%; 
+            width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     {% include 'includes/loader.html' %}
 
     <nav class="navbar">
-      <div class="navbar-left">
         <a class="brand" href="{% url 'home' %}">
-          <div class="brand-icon">AC</div>
-          AESM &amp; CR
+            <div class="brand-icon"><i class="fa fa-graduation-cap"></i></div>
+            <span>AESM &amp; CR</span>
         </a>
+
         <div class="nav-links">
-          <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
-          <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
-          <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+            <a href="{% url 'home' %}">Accueil</a>
+            <a href="#" class="active">AESM</a>
+            <a href="{% url 'dashboardCr' %}">Réflexion</a>
         </div>
-      </div>
 
-      <div class="navbar-right">
-        <a href="{% url 'admin:index' %}" class="btn-nav-action btn-nav-outline" style="margin-right:8px;"><i class="fa fa-shield-halved"></i> Admin</a>
-        {% if request.user.is_authenticated %}
-          <span class="badge badge-green" style="margin-right:8px;"><i class="fa fa-circle-check"></i> {{ user.last_name }}</span>
-          <a href="{% url 'account_logout' %}" class="btn-nav-action btn-nav-outline"><i class="fa fa-right-from-bracket"></i></a>
-        {% else %}
-          <a href="{% url 'account_login' %}" class="btn-nav-action btn-nav-outline"><i class="fa fa-right-to-bracket"></i> Connexion</a>
-          <a href="{% url 'account_signup' %}" class="btn-nav-action btn-primary" style="padding: 9px 18px; font-size: 14px;">Inscription</a>
-        {% endif %}
-      </div>
+        <div class="navbar-right">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'account_logout' %}" class="btn btn-outline" style="padding: 8px 16px; border-radius: 12px;">
+                    <i class="fa fa-sign-out-alt"></i> Quitter
+                </a>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="btn btn-outline" style="padding: 8px 16px;">Connexion</a>
+                <a href="{% url 'account_signup' %}" class="btn btn-primary" style="padding: 8px 16px;">S'inscrire</a>
+            {% endif %}
+        </div>
 
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+        <button class="hamburger" id="hamburger">
+            <i class="fa fa-bars-staggered" style="font-size: 1.2rem; color: var(--primary);"></i>
+        </button>
     </nav>
 
+    <div class="menu-overlay" id="overlay"></div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
-      <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
-      <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
-      <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion ({{ user.username }})</a>
-      {% else %}
-        <a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a>
-        <a href="{% url 'account_signup' %}" style="background: #0f172a; color: white;"><i class="fa fa-user-plus"></i> Inscription</a>
-      {% endif %}
+        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 30px;">
+            <span style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">Menu</span>
+            <button id="closeMenu" style="border:none; background:none; font-size: 1.5rem;">&times;</button>
+        </div>
+        <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
+        <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
+        <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Réflexion</a>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'account_logout' %}"><i class="fa fa-sign-out-alt"></i> Déconnexion</a>
+        {% else %}
+            <a href="{% url 'account_login' %}">Connexion</a>
+            <a href="{% url 'account_signup' %}" style="background: var(--primary); color: white;">Inscription</a>
+        {% endif %}
     </div>
 
     <div class="hero">
-      <div class="hero-content">
         <h1>AESM Dashboard</h1>
-        <p>Association des Etudiants en Sociologie de Madagascar. Suivez vos ressources, adhésions et publications scientifiques en temps réel.</p>
-      </div>
+        <p>Association des Etudiants en Sociologie de Madagascar. Votre espace membre innovant.</p>
     </div>
 
     <div class="main-wrapper">
-      <div class="stats-grid">
-        <div class="stat-card" style="animation-delay: 0.1s;">
-          <div class="stat-card-info">
-            <span class="stat-card-label">Membres actifs</span>
-            <span class="stat-card-value">{{ count_actif }}</span>
-          </div>
-          <div class="stat-icon blue"><i class="fa fa-users"></i></div>
-        </div>
-
-        <div class="stat-card" style="animation-delay: 0.2s;">
-          <div class="stat-card-info">
-            <span class="stat-card-label">Publications</span>
-            <span class="stat-card-value">{{ count_pub }}</span>
-          </div>
-          <div class="stat-icon green"><i class="fa fa-file-lines"></i></div>
-        </div>
-
-        <div class="stat-card" style="animation-delay: 0.3s;">
-          <div class="stat-card-info">
-            <span class="stat-card-label">Fichiers</span>
-            <span class="stat-card-value">{{ count_file }}</span>
-          </div>
-          <div class="stat-icon purple"><i class="fa fa-folder-open"></i></div>
-        </div>
-
-        <div class="stat-card" style="animation-delay: 0.4s;">
-          <div class="stat-card-info">
-            <span class="stat-card-label">Événements</span>
-            <span class="stat-card-value">{{ count_evenement }}</span>
-          </div>
-          <div class="stat-icon orange"><i class="fa fa-calendar-days"></i></div>
-        </div>
-      </div>
-
-      <div class="tabs-container">
-        <div class="tabs-bar">
-          <button class="tab-btn active" data-cat="apercu">Aperçu</button>
-          <button class="tab-btn" data-cat="account">Mon compte</button>
-          <button class="tab-btn" data-cat="publications">Publications</button>
-          <button class="tab-btn" data-cat="fichiers">Fichiers</button>
-          <button class="tab-btn" data-cat="budget">Budget</button>
-        </div>
-      </div>
-
-      <div class="section apercu active">
-        <div class="content-grid">
-          <div class="content-card">
-            <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=500&auto=format&fit=crop" class="content-card-image" alt="Guide">
-            <h2><i class="fa fa-circle-info" style="color: #2563eb;"></i> Guide de la plateforme</h2>
-            <p>Consultez la documentation complète ainsi que la foire aux questions pour maîtriser tous les outils de l'espace.</p>
-            <a href="{% url 'instructions_faq' %}" class="btn btn-outline" style="width:100%;"><i class="fa fa-book"></i> En savoir plus</a>
-          </div>
-
-          <div class="content-card">
-            <img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=500&auto=format&fit=crop" class="content-card-image" alt="Ressources">
-            <h2><i class="fa fa-folder-open" style="color: #9333ea;"></i> Ressources Partagées</h2>
-            <p>Accédez aux cours, documents de recherche et fichiers exclusifs téléchargeables mis à disposition des membres de l'AESM.</p>
-            {% if etat == 'actif' %}
-              <a href="{% url 'list_fichier_aesm' %}" class="btn btn-outline" style="width:100%;"><i class="fa fa-download"></i> Accéder aux fichiers</a>
-            {% else %}
-              <a href="{% url 'payement_adhesion' %}" class="btn btn-primary" style="width:100%;"><i class="fa fa-credit-card"></i> Adhérer à l'association</a>
-            {% endif %}
-          </div>
-
-          <div class="content-card full">
-            <h2><i class="fa fa-newspaper" style="color: #16a34a;"></i> Publications récentes</h2>
-            <p style="margin-bottom:20px;">Restez informé des derniers travaux de recherche et actualités de notre communauté sociologique.</p>
-            <div class="pub-list">
-              {% for pub in publication %}
-                <div class="pub-item">
-                  <div class="pub-item-info">
-                    <h3>{{ pub.titre }}</h3>
-                    <p><i class="fa-regular fa-clock"></i> {% if pub.date_publication|timesince == '0 minute' %}À l'instant{% else %}Il y a {{pub.date_publication|timesince }}{% endif %}</p>
-                  </div>
-                  <a href="{% url 'publication_detail_aesm' pub.pk %}" class="btn btn-outline" style="padding: 8px 16px; font-size:13px;">Lire l'article <i class="fa fa-arrow-right"></i></a>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-card-label">Membres</span>
+                    <span class="stat-card-value">{{ count_actif }}</span>
                 </div>
-              {% empty %}
-                <div class="empty-state">
-                  <i class="fa fa-newspaper"></i>
-                  <p>Aucune publication n'a encore été diffusée.</p>
-                </div>
-              {% endfor %}
+                <div class="stat-icon blue"><i class="fa fa-user-check"></i></div>
             </div>
-            <a href="{% url 'publication_easm' %}" class="btn btn-outline" style="margin-top:20px; width:100%;"><i class="fa fa-globe"></i> Explorer toutes les publications</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="section account">
-        <div class="content-grid">
-          <div class="content-card full">
-            <h2><i class="fa fa-circle-user" style="color: #2563eb;"></i> Gestion du Compte Étudiant</h2>
-            
-            {% if etat == 'visiteur' %}
-              <div class="empty-state">
-                <i class="fa fa-lock"></i>
-                <p>Espace sécurisé. Connectez-vous pour visualiser vos données d'adhésion et de scolarité.</p>
-                <a href="{% url 'account_login' %}" class="btn btn-primary"><i class="fa fa-right-to-bracket"></i> Se connecter</a>
-              </div>
-            {% elif etat == 'en_attente' %}
-              <div class="empty-state">
-                <i class="fa fa-clock"></i>
-                <p>Votre demande d'inscription est validée. En attente de régularisation du droit d'adhésion.</p>
-                <a href="{% url 'payement_adhesion' %}" class="btn btn-primary"><i class="fa fa-credit-card"></i> Régulariser mon statut</a>
-              </div>
-            {% elif etat == 'actif' %}
-              <span class="badge badge-green"><i class="fa fa-circle-check"></i> Dossier à jour / Membre actif</span>
-              
-              <div class="info-grid">
-                <div class="info-item"><div class="label">Nom</div><div class="value">{{ user.first_name }}</div></div>
-                <div class="info-item"><div class="label">Prénom</div><div class="value">{{ user.last_name }}</div></div>
-                <div class="info-item"><div class="label">Adresse Mail</div><div class="value">{{ user.email }}</div></div>
-                <div class="info-item"><div class="label">Numéro Matricule</div><div class="value">{{ etudiant.matricule }}</div></div>
-              </div>
-
-              {% if quitus %}
-                <div class="payment-card">
-                  <h3 style="font-size:16px; font-weight:700;"><i class="fa fa-receipt"></i> Reçu Numérique de Quitus</h3>
-                  <div class="payment-grid">
-                    <div><div class="label" style="opacity:0.6; font-size:11px;">ID TRANSACTION</div><div class="value">{{ quitus.paiement.transaction_id }}</div></div>
-                    <div><div class="label" style="opacity:0.6; font-size:11px;">MONTANT EN ARIARY</div><div class="value">{{ quitus.paiement.montant }} Ar</div></div>
-                    <div><div class="label" style="opacity:0.6; font-size:11px;">STATUT PAIEMENT</div><div class="value">{{ quitus.paiement.statut }}</div></div>
-                    <div><div class="label" style="opacity:0.6; font-size:11px;">DATE TRANSACTION</div><div class="value">{{ quitus.paiement.date_payement }}</div></div>
-                  </div>
-                  <a href="{{ quitus.fichier_pdf.url }}" download class="btn btn-primary" style="background: white; color: #0f172a; width:100%;"><i class="fa fa-file-pdf"></i> Télécharger le Quitus PDF</a>
+            <div class="stat-card">
+                <div>
+                    <span class="stat-card-label">Publications</span>
+                    <span class="stat-card-value">{{ count_pub }}</span>
                 </div>
-              {% endif %}
-            {% endif %}
-          </div>
+                <div class="stat-icon green"><i class="fa fa-newspaper"></i></div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <span class="stat-card-label">Fichiers</span>
+                    <span class="stat-card-value">{{ count_file }}</span>
+                </div>
+                <div class="stat-icon purple"><i class="fa fa-cloud-arrow-down"></i></div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <span class="stat-card-label">Événements</span>
+                    <span class="stat-card-value">{{ count_evenement }}</span>
+                </div>
+                <div class="stat-icon orange"><i class="fa fa-calendar-star"></i></div>
+            </div>
         </div>
-      </div>
 
-      <div class="section publications">
-        <div class="content-grid">
-          <div class="content-card full">
-            <h2><i class="fa fa-newspaper" style="color: #16a34a;"></i> Espace Archives &amp; Éditions</h2>
-            <p>Retrouvez l'intégralité du catalogue éditorial scientifique de Madagascar.</p>
-            <a href="{% url 'publication_easm' %}" class="btn btn-primary" style="width:100%;"><i class="fa fa-eye"></i> Ouvrir le catalogue</a>
-          </div>
+        <div class="tabs-container">
+            <div class="tabs-bar">
+                <button class="tab-btn active" data-cat="apercu">Aperçu</button>
+                <button class="tab-btn" data-cat="account">Compte</button>
+                <button class="tab-btn" data-cat="publications">Publications</button>
+                <button class="tab-btn" data-cat="fichiers">Fichiers</button>
+                <button class="tab-btn" data-cat="budget">Budget</button>
+            </div>
         </div>
-      </div>
 
-      <div class="section fichiers">
-        <div class="content-grid">
-          <div class="content-card full">
-            <h2><i class="fa fa-folder-open" style="color: #9333ea;"></i> Base Documentaire Globale</h2>
-            <p>Accédez aux répertoires de cours partagés et partages méthodologiques.</p>
-            {% if etat == 'actif' %}
-              <a href="{% url 'list_fichier_aesm' %}" class="btn btn-primary" style="width:100%;"><i class="fa fa-arrow-right"></i> Entrer dans le cloud ressources</a>
-            {% else %}
-              <div class="empty-state">
-                <i class="fa fa-lock"></i>
-                <p>Le Cloud AESM est accessible uniquement aux membres adhérents actifs.</p>
-                <a href="{% url 'payement_adhesion' %}" class="btn btn-primary"><i class="fa fa-credit-card"></i> Activer mon adhésion</a>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
+        <div class="section apercu active">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="content-card">
+                    <h2><i class="fa fa-circle-info" style="color:var(--primary)"></i> Guide</h2>
+                    <p style="color:var(--text-muted); margin-bottom:20px;">Questions fréquentes et guides d'utilisation.</p>
+                    <a href="{% url 'instructions_faq' %}" class="btn btn-outline" style="width:100%"><i class="fa fa-book"></i> Voir le Guide</a>
+                </div>
 
-      <div class="section budget">
-        <div class="content-grid">
-          <div class="content-card full">
-            <h2><i class="fa fa-chart-pie" style="color: #ea580c;"></i> Transparence Financière &amp; Budgets</h2>
-            <p>Visualisez la répartition des fonds d'adhésion pour les projets universitaires et sociaux.</p>
-            {% if etat == 'actif' %}
-              <a href="{% url 'dashboard_budget' %}" class="btn btn-primary" style="width:100%;"><i class="fa fa-chart-line"></i> Consulter le Tableau Analytique</a>
-            {% else %}
-              <div class="empty-state">
-                <i class="fa fa-lock"></i>
-                <p>Veuillez régulariser votre adhésion annuelle pour voir le bilan de l'association.</p>
-                <a href="{% url 'payement_adhesion' %}" class="btn btn-primary"><i class="fa fa-credit-card"></i> Payer l'adhésion</a>
-              </div>
-            {% endif %}
-          </div>
+                <div class="content-card">
+                    <h2><i class="fa fa-folder-open" style="color:var(--purple)"></i> Ressources</h2>
+                    <p style="color:var(--text-muted); margin-bottom:20px;">Accédez aux documents partagés.</p>
+                    {% if etat == 'actif' %}
+                        <a href="{% url 'list_fichier_aesm' %}" class="btn btn-primary" style="width:100%"><i class="fa fa-download"></i> Télécharger</a>
+                    {% else %}
+                        <a href="{% url 'payement_adhesion' %}" class="btn btn-primary" style="width:100%"><i class="fa fa-credit-card"></i> Devenir Membre</a>
+                    {% endif %}
+                </div>
+
+                <div class="content-card" style="grid-column: 1 / -1;">
+                    <h2><i class="fa fa-bolt" style="color:var(--orange)"></i> Dernières Nouvelles</h2>
+                    <div class="pub-list">
+                        {% for pub in publication %}
+                            <div class="pub-item">
+                                <div class="pub-item-info">
+                                    <h3>{{ pub.titre }}</h3>
+                                    <p style="font-size:0.8rem; color:var(--text-muted)">
+                                        <i class="fa fa-clock"></i> Il y a {{ pub.date_publication|timesince }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'publication_detail_aesm' pub.pk %}" class="btn btn-outline" style="padding: 6px 15px; font-size: 0.8rem;">Lire</a>
+                            </div>
+                        {% empty %}
+                            <div style="text-align:center; padding: 40px;">
+                                <i class="fa fa-ghost" style="font-size: 2rem; color: #ddd;"></i>
+                                <p>Rien à signaler pour le moment.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="section account" style="display:none;">
+            <div class="content-card">
+                <h2><i class="fa fa-user-circle"></i> Profil Utilisateur</h2>
+                {% if etat == 'visiteur' %}
+                    <div style="text-align:center; padding: 30px;">
+                        <p>Veuillez vous connecter pour voir votre profil.</p>
+                        <a href="{% url 'account_login' %}" class="btn btn-primary" style="margin-top:15px;">Connexion</a>
+                    </div>
+                {% elif etat == 'actif' %}
+                    <div class="info-grid">
+                        <div class="info-item"><div class="label">Nom complet</div><div class="value">{{ user.first_name }} {{ user.last_name }}</div></div>
+                        <div class="info-item"><div class="label">Email</div><div class="value">{{ user.email }}</div></div>
+                        <div class="info-item"><div class="label">Matricule</div><div class="value">{{ etudiant.matricule }}</div></div>
+                    </div>
+                    {% if quitus %}
+                        <div class="payment-card">
+                            <h3 style="margin-bottom:15px;"><i class="fa fa-shield-check"></i> Statut de Paiement</h3>
+                            <div class="info-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                                <div><small>ID Transaction</small><br><b>{{ quitus.paiement.transaction_id }}</b></div>
+                                <div><small>Montant</small><br><b>{{ quitus.paiement.montant }} Ar</b></div>
+                            </div>
+                            <a href="{{ quitus.fichier_pdf.url }}" class="btn" style="background:white; color:var(--primary); width:100%; justify-content:center;">
+                                <i class="fa fa-file-pdf"></i> Mon Quitus PDF
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section publications" style="display:none;">
+            <div class="content-card">
+                <h2>Publications</h2>
+                <a href="{% url 'publication_easm' %}" class="btn btn-primary">Voir toutes les publications</a>
+            </div>
+        </div>
+        
+        <div class="section fichiers" style="display:none;">
+            <div class="content-card">
+                <h2>Fichiers Partagés</h2>
+                {% if etat == 'actif' %}
+                    <a href="{% url 'list_fichier_aesm' %}" class="btn btn-primary">Explorer les dossiers</a>
+                {% else %}
+                    <p>Accès restreint aux membres actifs.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section budget" style="display:none;">
+            <div class="content-card">
+                <h2>Finance & Budget</h2>
+                {% if etat == 'actif' %}
+                    <a href="{% url 'dashboard_budget' %}" class="btn btn-primary">Accéder au Dashboard Financier</a>
+                {% else %}
+                    <p>Inscrivez-vous pour voir la transparence financière.</p>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 
     {% include 'includes/footer.html' %}
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Gestion des Onglets Pro et Transitions
+        // Tab Management
         const tabBtns = document.querySelectorAll(".tab-btn");
         const sections = document.querySelectorAll(".section");
 
         tabBtns.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const targetCat = btn.getAttribute("data-cat");
-
-            tabBtns.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            sections.forEach((sec) => {
-              sec.style.opacity = "0";
-              sec.style.transform = "translateY(10px)";
-              setTimeout(() => {
-                sec.classList.remove("active");
-                if (sec.classList.contains(targetCat)) {
-                  sec.classList.add("active");
-                  setTimeout(() => {
-                    sec.style.opacity = "1";
-                    sec.style.transform = "translateY(0)";
-                  }, 50);
-                }
-              }, 200);
+            btn.addEventListener("click", () => {
+                const cat = btn.getAttribute("data-cat");
+                tabBtns.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                
+                sections.forEach((s) => {
+                    s.style.display = "none";
+                    if(s.classList.contains(cat)) {
+                        s.style.display = "block";
+                    }
+                });
             });
-          });
         });
 
-        // Hamburger Navigation Responsive Interative
+        // Mobile Menu Management
         const hamburger = document.getElementById("hamburger");
         const mobileMenu = document.getElementById("mobileMenu");
+        const overlay = document.getElementById("overlay");
+        const closeMenu = document.getElementById("closeMenu");
 
-        hamburger.addEventListener("click", () => {
-          hamburger.classList.toggle("open");
-          mobileMenu.classList.toggle("open");
-        });
+        const toggleMenu = () => {
+            mobileMenu.classList.toggle("open");
+            overlay.style.display = mobileMenu.classList.contains("open") ? "block" : "none";
+        };
 
-        // Fermeture automatique du menu au clic mobile
-        mobileMenu.querySelectorAll("a").forEach((link) => {
-          link.addEventListener("click", () => {
-            hamburger.classList.remove("open");
-            mobileMenu.classList.remove("open");
-          });
-        });
-      });
+        hamburger.addEventListener("click", toggleMenu);
+        closeMenu.addEventListener("click", toggleMenu);
+        overlay.addEventListener("click", toggleMenu);
     </script>
-  </body>
+</body>
 </html>
