@@ -451,7 +451,13 @@ a {
 .content-card.full {
   grid-column: 1 / -1;
 }
-
+.content-card img {
+  width: 100%;
+  height: 160px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  object-fit: cover;
+}
 .content-card h2 {
   font-family: var(--font-head);
   font-size: 17px;
