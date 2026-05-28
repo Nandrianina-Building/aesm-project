@@ -17,728 +17,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      :root {
-        --blue-dark: #0f136d;
-        --blue-mid: #252bca;
-        --blue-light: #4351f9;
-        --accent: #6366f1;
-        --accent-glow: rgba(99, 102, 241, 0.15);
-        --white: #ffffff;
-        --bg: #f8fafc;
-        --card-bg: #ffffff;
-        --text-primary: #0f172a;
-        --text-muted: #475569;
-        --text-light: #94a3b8;
-        --border: #e2e8f0;
-        --radius: 16px;
-        --radius-sm: 10px;
-        --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-        --shadow-md: 0 10px 30px -4px rgba(15, 23, 42, 0.08);
-        --font-head: "Syne", sans-serif;
-        --font-body: "DM Sans", sans-serif;
-      }
-
-      body {
-        font-family: var(--font-body);
-        background: var(--bg);
-        color: var(--text-primary);
-        font-size: 15px;
-        line-height: 1.6;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      /* ── NAVBAR PRO ── */
-      .navbar {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
-        padding: 0 32px;
-        height: 70px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        gap: 16px;
-        transition: all 0.3s;
-      }
-
-      .navbar-left {
-        display: flex;
-        align-items: center;
-        gap: 36px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: var(--font-head);
-        font-size: 19px;
-        font-weight: 800;
-        color: var(--text-primary);
-        white-space: nowrap;
-      }
-
-      .brand-icon {
-        width: 42px;
-        height: 42px;
-        background: linear-gradient(135deg, var(--blue-mid), var(--accent));
-        color: white;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(37, 43, 202, 0.25);
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .nav-links a {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border-radius: var(--radius-sm);
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text-muted);
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-      }
-
-      .nav-links a:hover {
-        background: #f1f5f9;
-        color: var(--blue-mid);
-      }
-
-      .nav-links a.active {
-        background: var(--blue-mid);
-        color: var(--white);
-        box-shadow: 0 4px 12px rgba(37, 43, 202, 0.2);
-      }
-
-      .navbar-right {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        flex-shrink: 0;
-      }
-
-      .navbar-right a,
-      .navbar-right p {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-      }
-
-      .btn-logout {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 18px;
-        border-radius: var(--radius-sm);
-        font-size: 14px;
-        font-weight: 600;
-        background: transparent;
-        color: #ef4444;
-        border: 1.5px solid #fee2e2;
-        cursor: pointer;
-        transition: all 0.25s;
-      }
-
-      .btn-logout:hover {
-        background: #fef2f2;
-        border-color: #ef4444;
-      }
-
-      /* Hamburger */
-      .hamburger {
-        display: none;
-        flex-direction: column;
-        gap: 6px;
-        cursor: pointer;
-        padding: 8px;
-        border: none;
-        background: none;
-        z-index: 200;
-      }
-
-      .hamburger span {
-        display: block;
-        width: 26px;
-        height: 2.5px;
-        background: var(--text-primary);
-        border-radius: 4px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .hamburger.open span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); }
-      .hamburger.open span:nth-child(2) { opacity: 0; transform: translateX(-10px); }
-      .hamburger.open span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); }
-
-      /* Mobile menu */
-      .mobile-menu {
-        display: none;
-        position: fixed;
-        inset: 70px 0 0 0;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(16px);
-        z-index: 99;
-        padding: 24px;
-        flex-direction: column;
-        gap: 10px;
-        border-top: 1px solid var(--border);
-        animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-15px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      .mobile-menu.open { display: flex; }
-
-      .mobile-menu a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 20px;
-        border-radius: var(--radius-sm);
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-        background: var(--white);
-        transition: all 0.2s;
-      }
-
-      .mobile-menu a:hover,
-      .mobile-menu a.active {
-        background: var(--blue-mid);
-        color: var(--white);
-        border-color: var(--blue-mid);
-        box-shadow: 0 4px 12px rgba(37, 43, 202, 0.15);
-      }
-
-      .mobile-menu .mobile-divider {
-        height: 1px;
-        background: var(--border);
-        margin: 12px 0;
-      }
-
-      /* ── HERO PRO (AVEC TEXTURE & IMAGE) ── */
-      .hero {
-        background: linear-gradient(135deg, var(--blue-dark) 0%, rgba(37, 43, 202, 0.9) 60%, rgba(99, 102, 241, 0.85) 100%),
-                    url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80');
-        background-size: cover;
-        background-position: center;
-        background-blend-mode: multiply;
-        padding: 80px 32px 100px;
-        position: relative;
-        overflow: hidden;
-        text-align: left;
-      }
-
-      .hero-content {
-        position: relative;
-        max-width: 1200px;
-        margin: 0 auto;
-        animation: fadeInUp 0.6s ease-out;
-      }
-
-      .hero h1 {
-        font-family: var(--font-head);
-        font-size: clamp(32px, 5vw, 48px);
-        font-weight: 800;
-        color: var(--white);
-        letter-spacing: -1px;
-        margin-bottom: 12px;
-        line-height: 1.2;
-      }
-
-      .hero p {
-        font-size: 17px;
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 400;
-        max-width: 600px;
-      }
-
-      /* ── MAIN LAYOUT ── */
-      .main-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 24px 64px;
-      }
-
-      /* ── STAT CARDS ANIMÉES ── */
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-top: -40px;
-        position: relative;
-        z-index: 10;
-      }
-
-      .stat-card {
-        background: var(--card-bg);
-        border-radius: var(--radius);
-        padding: 24px;
-        box-shadow: var(--shadow-md);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.15);
-      }
-
-      .stat-card-info {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .stat-card-label {
-        font-size: 13px;
-        color: var(--text-muted);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .stat-card-value {
-        font-family: var(--font-head);
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--text-primary);
-        line-height: 1.1;
-      }
-
-      .stat-icon {
-        width: 54px;
-        height: 54px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        flex-shrink: 0;
-        transition: all 0.3s;
-      }
-
-      .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(5deg);
-      }
-
-      .stat-icon.blue { background: #eff6ff; color: #2563eb; }
-      .stat-icon.green { background: #f0fdf4; color: #16a34a; }
-      .stat-icon.purple { background: #faf5ff; color: #9333ea; }
-      .stat-icon.orange { background: #fff7ed; color: #ea580c; }
-
-      /* ── TABS MODÈLES SAAS ── */
-      .tabs-bar {
-        display: flex;
-        gap: 10px;
-        margin-top: 40px;
-        flex-wrap: wrap;
-        background: #f1f5f9;
-        padding: 6px;
-        border-radius: 30px;
-        width: fit-content;
-      }
-
-      .tab-btn {
-        padding: 10px 24px;
-        border-radius: 24px;
-        border: none;
-        background: transparent;
-        font-family: var(--font-body);
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: all 0.25s ease;
-      }
-
-      .tab-btn:hover {
-        color: var(--text-primary);
-      }
-
-      .tab-btn.active {
-        background: var(--white);
-        color: var(--blue-mid);
-        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
-      }
-
-      /* ── SECTIONS CONTENU ── */
-      .section {
-        display: none;
-      }
-
-      .section.active {
-        display: block;
-        animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      /* ── CARD GRID WITH IMAGES ── */
-      .content-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin-top: 32px;
-      }
-
-      .content-card {
-        background: var(--card-bg);
-        border-radius: var(--radius);
-        padding: 32px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .card-illustration {
-        width: 100%;
-        height: 140px;
-        object-fit: cover;
-        border-radius: var(--radius-sm);
-        margin-bottom: 20px;
-      }
-
-      .content-card.full { grid-column: 1 / -1; }
-
-      .content-card h2 {
-        font-family: var(--font-head);
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-      }
-
-      .content-card > p {
-        font-size: 14px;
-        color: var(--text-muted);
-        margin-bottom: 24px;
-      }
-
-      /* ── BOUTONS PRO ET INTEGRATIONS ── */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border-radius: var(--radius-sm);
-        font-family: var(--font-body);
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        border: none;
-        justify-content: center;
-      }
-
-      .btn-outline {
-        background: var(--white);
-        border: 1.5px solid var(--border);
-        color: var(--text-primary);
-      }
-
-      .btn-outline:hover {
-        background: #f8fafc;
-        border-color: var(--text-light);
-        transform: translateY(-1px);
-      }
-
-      .btn-primary {
-        background: var(--blue-mid);
-        color: var(--white);
-        box-shadow: 0 4px 14px rgba(37, 43, 202, 0.3);
-      }
-
-      .btn-primary:hover {
-        background: var(--blue-light);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(37, 43, 202, 0.4);
-      }
-
-      .btn-download {
-        background: #0284c7;
-        color: var(--white);
-        border-radius: var(--radius-sm);
-        padding: 12px 22px;
-        font-size: 14px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
-        transition: all 0.2s;
-      }
-
-      .btn-download:hover {
-        background: #0369a1;
-        transform: translateY(-1px);
-      }
-
-      /* ── RECENT PUBLICATIONS LIST ── */
-      .pub-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .pub-item {
-        padding: 18px 20px;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border);
-        background: #f8fafc;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        transition: all 0.2s;
-      }
-
-      .pub-item:hover {
-        border-color: var(--accent);
-        background: var(--white);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        transform: translateX(4px);
-      }
-
-      .pub-item-info h3 {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 4px;
-      }
-
-      .pub-item-info p {
-        font-size: 13px;
-        color: var(--text-light);
-      }
-
-      .pub-item .btn-sm {
-        font-size: 13px;
-        padding: 8px 16px;
-        border-radius: 8px;
-        background: var(--white);
-        border: 1px solid var(--border);
-        color: var(--text-primary);
-        font-weight: 600;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .pub-item .btn-sm:hover {
-        background: var(--blue-mid);
-        color: var(--white);
-        border-color: var(--blue-mid);
-      }
-
-      .view-all {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--blue-mid);
-        margin-top: 24px;
-        transition: all 0.2s;
-      }
-
-      .view-all:hover { gap: 10px; color: var(--blue-light); }
-
-      /* ── ACCOUNT MON COMPTE ── */
-      .info-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-top: 20px;
-      }
-
-      .info-item {
-        background: #f8fafc;
-        border-radius: var(--radius-sm);
-        padding: 16px 20px;
-        border: 1px solid var(--border);
-      }
-
-      .info-item .label {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--text-light);
-        margin-bottom: 6px;
-      }
-
-      .info-item .value {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-
-      .payment-card {
-        background: linear-gradient(135deg, #0f136d 0%, #252bca 100%);
-        color: white;
-        border-radius: var(--radius);
-        padding: 32px;
-        margin-top: 28px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .payment-card::after {
-        content: '\f1f2';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        position: absolute;
-        bottom: -20px;
-        right: -10px;
-        font-size: 120px;
-        opacity: 0.06;
-      }
-
-      .payment-card h3 {
-        font-family: var(--font-head);
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .payment-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin-bottom: 24px;
-        position: relative;
-        z-index: 2;
-      }
-
-      .payment-field .label {
-        font-size: 12px;
-        opacity: 0.7;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .payment-field .value { font-size: 16px; font-weight: 600; }
-
-      /* ── STATUS BADGE ── */
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 30px;
-        font-size: 12px;
-        font-weight: 600;
-      }
-
-      .badge-green { background: #dcfce7; color: #15803d; }
-      .badge-yellow { background: #fef9c3; color: #a16207; }
-      .badge-gray { background: #f1f5f9; color: #475569; }
-
-      /* ── EMPTY STATES VIDES ── */
-      .empty-state {
-        text-align: center;
-        padding: 48px 24px;
-        color: var(--text-muted);
-      }
-
-      .empty-state i {
-        font-size: 48px;
-        margin-bottom: 16px;
-        color: var(--text-light);
-      }
-
-      .empty-state p { font-size: 15px; margin-bottom: 24px; }
-
-      /* ── RESPONSIVE COMPLÈTEMENT OPS ── */
-      @media (max-width: 1024px) {
-        .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-      }
-
-      @media (max-width: 768px) {
-        .navbar { padding: 0 20px; }
-        .nav-links, .navbar-right { display: none; }
-        .hamburger { display: flex; }
-        .hero { padding: 60px 20px 80px; }
-        .main-wrapper { padding: 0 16px 48px; }
-        .stats-grid { margin-top: -30px; gap: 14px; }
-        .stat-card { padding: 20px 16px; }
-        .stat-card-value { font-size: 26px; }
-        .content-grid { grid-template-columns: 1fr; gap: 20px; }
-        .info-grid, .payment-grid { grid-template-columns: 1fr; gap: 14px; }
-        .tabs-bar { width: 100%; justify-content: flex-start; overflow-x: auto; white-space: nowrap; padding: 4px; }
-        .tab-btn { padding: 8px 18px; }
-      }
-
-      @media (max-width: 480px) {
-        .stats-grid { grid-template-columns: 1fr; }
-        .hero h1 { font-size: 28px; }
-        .pub-item { flex-direction: column; align-items: flex-start; gap: 12px; }
-        .pub-item .btn-sm { width: 100%; justify-content: center; }
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/dashboard_aesm.css' %}">
+    
   </head>
   <body>
     {% include 'includes/loader.html' %}
-    
     <!-- ── NAVBAR ── -->
     <nav class="navbar">
       <div class="navbar-left">
@@ -749,18 +32,37 @@
         <div class="nav-links">
           <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
           <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
-          <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+          <a href="{% url 'dashboardCr' %}"
+            ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+          >
         </div>
       </div>
 
       <div class="navbar-right">
-        <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+        <a href="{% url 'admin:index' %}"
+          ><i class="fa fa-shield-halved"></i> Administrateur</a
+        >
         {% if request.user.is_authenticated %}
-          <span class="badge badge-green"><i class="fa fa-circle-check"></i> {{ user.last_name }}</span>
-          <a href="{% url 'account_logout' %}" class="btn-logout"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+        <span class="badge badge-green"
+          ><i class="fa fa-circle-check"></i> {{ user.last_name }}</span
+        >
+          
+      <a href="{% url 'account_logout' %}" class="btn btn-outline"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
         {% else %}
-          <a href="{% url 'account_login' %}" class="btn btn-outline" style="padding: 8px 18px;"><i class="fa fa-right-to-bracket"></i> Connexion</a>
-          <a href="{% url 'account_signup' %}" class="btn btn-primary" style="padding: 8px 18px;"><i class="fa fa-user-plus"></i> Inscription</a>
+        <a
+          href="{% url 'account_login' %}"
+          class="btn btn-outline"
+          style="width: auto; padding: 7px 16px"
+        >
+          <i class="fa fa-right-to-bracket"></i> Connexion
+        </a>
+        <a
+          href="{% url 'account_signup' %}"
+          class="btn btn-outline"
+          style="width: auto; padding: 7px 16px ;background : #0f1117 ; color : #fff"
+        >
+          <i class="fa fa-user-plus"></i> Inscription
+        </a>
         {% endif %}
       </div>
 
@@ -773,23 +75,31 @@
     <div class="mobile-menu" id="mobileMenu">
       <a href="{% url 'home' %}"><i class="fa fa-house"></i> Accueil</a>
       <a href="#" class="active"><i class="fa fa-users"></i> AESM</a>
-      <a href="{% url 'dashboardCr' %}"><i class="fa fa-book-open"></i> Centre de Réflexion</a>
+      <a href="{% url 'dashboardCr' %}"
+        ><i class="fa fa-book-open"></i> Centre de Réflexion</a
+      >
       <div class="mobile-divider"></div>
-      <a href="{% url 'admin:index' %}"><i class="fa fa-shield-halved"></i> Administrateur</a>
+      <a href="{% url 'admin:index' %}"
+        ><i class="fa fa-shield-halved"></i> Administrateur</a
+      >
       {% if request.user.is_authenticated %}
-        <a href="#"><i class="fa fa-circle-user"></i> {{ user.username }}</a>
-        <a href="{% url 'account_logout' %}" style="color: #ef4444;"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+       <a href="{% url 'account_logout' %}"><i class="fa fa-right-from-bracket"></i> Déconnexion</a>
+      <a href="#"><i class="fa fa-circle-user"></i> {{ user.username }}</a>
       {% else %}
-        <a href="{% url 'account_login' %}"><i class="fa fa-right-to-bracket"></i> Connexion</a>
-        <a href="{% url 'account_signup' %}"><i class="fa fa-user-plus"></i> Inscription</a>
+      <a href="{% url 'account_login' %}"
+        ><i class="fa fa-right-to-bracket"></i> Connexion</a
+      >
+      <a href="{% url 'account_signup' %}"
+        ><i class="fa fa-user-plus"></i> Inscription</a
+      >
       {% endif %}
     </div>
 
-    <!-- ── HERO PRO ── -->
+    <!-- ── HERO ── -->
     <div class="hero">
       <div class="hero-content">
         <h1>AESM Dashboard</h1>
-        <p>Association des Étudiants en Sociologie de Madagascar. Gérez vos ressources, publications et adhésions en ligne.</p>
+        <p>Association des Etudiants Sociologie Madagascar</p>
       </div>
     </div>
 
@@ -826,11 +136,13 @@
             <span class="stat-card-label">Événements</span>
             <span class="stat-card-value">{{ count_evenement }}</span>
           </div>
-          <div class="stat-icon orange"><i class="fa fa-calendar-days"></i></div>
+          <div class="stat-icon orange">
+            <i class="fa fa-calendar-days"></i>
+          </div>
         </div>
       </div>
 
-      <!-- Tabs Navigation -->
+      <!-- Tabs -->
       <div class="tabs-bar">
         <button class="tab-btn active" data-cat="apercu">Aperçu</button>
         <button class="tab-btn" data-cat="account">Mon compte</button>
@@ -842,51 +154,82 @@
       <!-- ── APERÇU ── -->
       <div class="section apercu active">
         <div class="content-grid">
-          <!-- Guide -->
+          <!-- FAQ / Instructions -->
           <div class="content-card">
-            <div>
-              <img src="https://images.unsplash.com/photo-1553484771-047a44eee27f?auto=format&fit=crop&w=500&q=80" alt="Guide" class="card-illustration">
-              <h2><i class="fa fa-circle-info" style="color: var(--blue-mid); margin-right: 8px;"></i>Guide de la plateforme</h2>
-              <p>Retrouvez ici les réponses aux questions fréquentes et les guides complets pour utiliser au mieux votre espace.</p>
-            </div>
-            <a href="{% url 'instructions_faq' %}" class="btn btn-outline"><i class="fa fa-book"></i> En savoir plus</a>
+            <h2>
+              <i
+                class="fa fa-circle-info"
+                style="color: var(--blue-mid); margin-right: 8px"
+              ></i
+              >Guide de la plateforme
+            </h2>
+            <p>
+              Les questions fréquentes et les guides d'utilisation de cette
+              plateforme.
+            </p>
+            <a href="{% url 'instructions_faq' %}" class="btn btn-outline">
+              <i class="fa fa-book"></i> En savoir plus
+            </a>
           </div>
 
           <!-- Ressources -->
           <div class="content-card">
-            <div>
-              <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=500&q=80" alt="Ressources" class="card-illustration">
-              <h2><i class="fa fa-folder-open" style="color: #9333ea; margin-right: 8px;"></i>Ressources &amp; Documents</h2>
-              <p>Accédez instantanément à la bibliothèque numérique, fiches de cours, et formulaires de l'association.</p>
-            </div>
+            <h2>
+              <i
+                class="fa fa-folder-open"
+                style="color: #9333ea; margin-right: 8px"
+              ></i
+              >Ressources
+            </h2>
+            <p>Documents et fichiers téléchargeables pour les membres.</p>
             {% if etat == 'actif' %}
-              <a href="{% url 'list_fichier_aesm' %}" class="btn btn-outline"><i class="fa fa-download"></i> Accéder aux fichiers</a>
+            <a href="{% url 'list_fichier_aesm' %}" class="btn btn-outline">
+              <i class="fa fa-download"></i> Accéder aux fichiers
+            </a>
             {% else %}
-              <a href="{% url 'payement_adhesion' %}" class="btn btn-primary"><i class="fa fa-credit-card"></i> Adhérer à l'association</a>
+            <a href="{% url 'payement_adhesion' %}" class="btn btn-primary">
+              <i class="fa fa-credit-card"></i> Adhérer à l'association
+            </a>
             {% endif %}
           </div>
 
           <!-- Publications récentes -->
           <div class="content-card full">
-            <h2><i class="fa fa-newspaper" style="color: #16a34a; margin-right: 8px;"></i>Publications récentes</h2>
-            <p>Suivez les actualités et dernières annonces phares partagées par l'AESM.</p>
+            <h2>
+              <i
+                class="fa fa-newspaper"
+                style="color: #16a34a; margin-right: 8px"
+              ></i
+              >Publications récentes
+            </h2>
+            <p>Dernières annonces et événements de l'association.</p>
             <div class="pub-list">
               {% for pub in publication %}
               <div class="pub-item">
                 <div class="pub-item-info">
                   <h3>{{ pub.titre }}</h3>
-                  <p>{% if pub.date_publication|timesince == '0 minute' %} À l'instant {% else %} Il y a {{ pub.date_publication|timesince }} {% endif %}</p>
+                  <p>
+                    {% if pub.date_publication|timesince == '0 minute' %} À
+                    l'instant {% else %} Il y a {{pub.date_publication|timesince }} {% endif %}
+                  </p>
                 </div>
-                <a href="{% url 'publication_detail_aesm' pub.pk %}" class="btn-sm">Lire <i class="fa fa-arrow-right"></i></a>
+                <a
+                  href="{% url 'publication_detail_aesm' pub.pk %}"
+                  class="btn-sm"
+                >
+                  Lire <i class="fa fa-arrow-right"></i>
+                </a>
               </div>
               {% empty %}
               <div class="empty-state">
                 <i class="fa fa-newspaper"></i>
-                <p>Aucune publication disponible actuellement.</p>
+                <p>Aucune publication pour le moment.</p>
               </div>
               {% endfor %}
             </div>
-            <a href="{% url 'publication_easm' %}" class="view-all">Voir toutes les publications <i class="fa fa-arrow-right"></i></a>
+            <a href="{% url 'publication_easm' %}" class="view-all">
+              Voir toutes les publications <i class="fa fa-arrow-right"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -895,130 +238,207 @@
       <div class="section account">
         <div class="content-grid">
           <div class="content-card full">
-            <h2><i class="fa fa-circle-user" style="color: var(--blue-mid); margin-right: 8px;"></i>Mon compte étudiant</h2>
+            <h2>
+              <i
+                class="fa fa-circle-user"
+                style="color: var(--blue-mid); margin-right: 8px"
+              ></i
+              >Mon compte
+            </h2>
 
             {% if etat == 'visiteur' %}
             <div class="empty-state">
               <i class="fa fa-lock"></i>
-              <p>Veuillez vous connecter pour accéder aux données sécurisées de votre espace membre.</p>
-              <a href="{% url 'account_login' %}" class="btn btn-primary" style="width: auto;"><i class="fa fa-right-from-bracket"></i> Se connecter</a>
+              <p>
+                Veuillez vous connecter pour accéder aux fonctionnalités
+                réservées aux membres.
+              </p>
+              <a
+                href="{% url 'account_login' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-right-to-bracket"></i> Se connecter
+              </a>
             </div>
 
             {% elif etat == 'en_attente' %}
             <div class="empty-state">
               <i class="fa fa-clock"></i>
-              <p>Votre inscription est validée ! Veuillez régler votre cotisation pour activer pleinement votre compte.</p>
-              <a href="{% url 'payement_adhesion' %}" class="btn btn-primary" style="width: auto;"><i class="fa fa-credit-card"></i> Activer mon adhésion</a>
+              <p>
+                Vous êtes inscrit mais votre adhésion n'est pas encore active.
+              </p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-credit-card"></i> Payer maintenant
+              </a>
             </div>
 
             {% elif etat == 'actif' %}
-            <div style="margin-bottom: 20px;">
-              <span class="badge badge-green"><i class="fa fa-circle-check"></i> Profil Membre Actif</span>
-            </div>
+            <p style="margin-bottom: 16px">
+              <span class="badge badge-green"
+                ><i class="fa fa-circle-check"></i> Membre actif</span
+              >
+            </p>
             <div class="info-grid">
-              <div class="info-item"><div class="label">Nom</div><div class="value">{{ user.first_name }}</div></div>
-              <div class="info-item"><div class="label">Prénom</div><div class="value">{{ user.last_name }}</div></div>
-              <div class="info-item"><div class="label">Adresse Email</div><div class="value">{{ user.email }}</div></div>
-              <div class="info-item"><div class="label">Numéro Matricule</div><div class="value">{{ etudiant.matricule }}</div></div>
+              <div class="info-item">
+                <div class="label">Nom</div>
+                <div class="value">{{ user.first_name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Prénom</div>
+                <div class="value">{{ user.last_name }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Email</div>
+                <div class="value">{{ user.email }}</div>
+              </div>
+              <div class="info-item">
+                <div class="label">Matricule</div>
+                <div class="value">{{ etudiant.matricule }}</div>
+              </div>
             </div>
 
             {% if quitus %}
             <div class="payment-card">
-              <h3><i class="fa fa-receipt"></i> Reçu officiel de paiement</h3>
+              <h3>
+                <i class="fa fa-receipt"></i> Informations sur votre paiement
+              </h3>
               <div class="payment-grid">
-                <div class="payment-field"><div class="label">ID Transaction</div><div class="value">{{ quitus.paiement.transaction_id }}</div></div>
-                <div class="payment-field"><div class="label">Montant versé</div><div class="value">{{ quitus.paiement.montant }} Ariary</div></div>
-                <div class="payment-field"><div class="label">Statut</div><div class="value">{{ quitus.paiement.statut }}</div></div>
-                <div class="payment-field"><div class="label">Date effective</div><div class="value">{{ quitus.paiement.date_payement }}</div></div>
+                <div class="payment-field">
+                  <div class="label">Transaction ID</div>
+                  <div class="value">{{ quitus.paiement.transaction_id }}</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Montant</div>
+                  <div class="value">{{ quitus.paiement.montant }} Ariary</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Statut</div>
+                  <div class="value">{{ quitus.paiement.statut }}</div>
+                </div>
+                <div class="payment-field">
+                  <div class="label">Date de paiement</div>
+                  <div class="value">{{ quitus.paiement.date_payement }}</div>
+                </div>
               </div>
-              <a href="{{ quitus.fichier_pdf.url }}" download class="btn-download"><i class="fa fa-file-pdf"></i> Télécharger mon Quitus PDF</a>
+              <a
+                href="{{ quitus.fichier_pdf.url }}"
+                download
+                class="btn-download"
+              >
+                <i class="fa fa-file-pdf"></i> Télécharger votre quitus
+              </a>
             </div>
-            {% endif %}
-            {% endif %}
+            {% endif %} {% endif %}
           </div>
         </div>
       </div>
 
-      <!-- ── PUBLICATIONS EXTRA ── -->
+      <!-- ── PUBLICATIONS ── -->
       <div class="section publications">
         <div class="content-grid">
           <div class="content-card full">
-            <h2><i class="fa fa-newspaper" style="color: #16a34a; margin-right: 8px;"></i>Flux des publications</h2>
-            <p>Retrouvez l'intégralité des articles de recherche, revues de presse et notes de l'association.</p>
-            <a href="{% url 'publication_easm' %}" class="btn btn-primary" style="width: auto; max-width: 250px;"><i class="fa fa-arrow-right"></i> Ouvrir le catalogue</a>
+            <h2>
+              <i
+                class="fa fa-newspaper"
+                style="color: #16a34a; margin-right: 8px"
+              ></i
+              >Publications
+            </h2>
+            <p>Consultez les dernières publications de l'association.</p>
+            <a
+              href="{% url 'publication_easm' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-arrow-right"></i> Voir toutes les publications
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- ── FICHIERS EXTRA ── -->
+      <!-- ── FICHIERS ── -->
       <div class="section fichiers">
         <div class="content-grid">
           <div class="content-card full">
-            <h2><i class="fa fa-folder-open" style="color: #9333ea; margin-right: 8px;"></i>Espace Téléchargement</h2>
-            <p>Documents administratifs et supports pédagogiques réservés à la communauté de sociologie.</p>
+            <h2>
+              <i
+                class="fa fa-folder-open"
+                style="color: #9333ea; margin-right: 8px"
+              ></i
+              >Fichiers
+            </h2>
+            <p>
+              Accédez aux fichiers partagés par les membres de l'association.
+            </p>
             {% if etat == 'actif' %}
-              <a href="{% url 'list_fichier_aesm' %}" class="btn btn-primary" style="width: auto; max-width: 250px;"><i class="fa fa-download"></i> Explorer les dossiers</a>
+            <a
+              href="{% url 'list_fichier_aesm' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-download"></i> Voir les fichiers
+            </a>
             {% else %}
-              <p style="color: var(--text-light); margin-bottom: 20px;"><i class="fa fa-lock"></i> Réservé aux membres à jour de cotisation.</p>
-              <a href="{% url 'payement_adhesion' %}" class="btn btn-primary" style="width: auto; max-width: 250px;"><i class="fa fa-credit-card"></i> Adhérer maintenant</a>
+             <p>Vous n'avez pas encore accès aux fichiers.</p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-credit-card"></i> Adhérer à l'association
+            </a>
             {% endif %}
           </div>
         </div>
       </div>
 
-      <!-- ── BUDGET EXTRA ── -->
+      <!-- ── BUDGET ── -->
       <div class="section budget">
         <div class="content-grid">
           <div class="content-card full">
-            <h2><i class="fa fa-chart-pie" style="color: #ea6e0e; margin-right: 8px;"></i>Transparence Financière</h2>
-            <p>Suivi en temps réel des budgets alloués et dépenses de l'association.</p>
+            <h2>
+              <i
+                class="fa fa-chart-pie"
+                style="color: #ea6e0e; margin-right: 8px"
+              ></i
+              >Budget
+            </h2>
+            <p>Visualisez les informations financières de l'association.</p>
             {% if etat == 'actif' %}
-              <a href="{% url 'dashboard_budget' %}" class="btn btn-outline" style="width: auto; max-width: 250px;"><i class="fa fa-chart-bar"></i> Consulter les graphiques</a>
+            <a
+              href="{% url 'dashboard_budget' %}"
+              class="btn btn-outline"
+              style="width: auto; display: inline-flex"
+            >
+              <i class="fa fa-chart-bar"></i> Voir le dashboard budget
+            </a>
             {% else %}
-              <div class="empty-state">
-                <i class="fa fa-lock"></i>
-                <p>Veuillez adhérer à l'association pour accéder au tableau budgétaire.</p>
-                <a href="{% url 'payement_adhesion' %}" class="btn btn-primary" style="width: auto;"><i class="fa fa-credit-card"></i> Payer ma cotisation</a>
-              </div>
+            <div class="empty-state">
+              <i class="fa fa-lock"></i>
+              <p>
+                Veuillez adhérer à l'association pour accéder au dashboard
+                budget.
+              </p>
+              <a
+                href="{% url 'payement_adhesion' %}"
+                class="btn btn-primary"
+                style="width: auto; display: inline-flex"
+              >
+                <i class="fa fa-credit-card"></i> Payer maintenant
+              </a>
+            </div>
             {% endif %}
           </div>
         </div>
       </div>
     </div>
-
-    {% include 'includes/footer.html' %}
-
-    <script>
-      // ── Gestion des Onglets (Tabs) ──
-      const tabBtns = document.querySelectorAll(".tab-btn");
-      const sections = document.querySelectorAll(".section");
-
-      tabBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const cat = btn.getAttribute("data-cat");
-          tabBtns.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          sections.forEach((s) => {
-            s.classList.toggle("active", s.classList.contains(cat));
-          });
-        });
-      });
-
-      // ── Menu Mobile Hamburger ──
-      const hamburger = document.getElementById("hamburger");
-      const mobileMenu = document.getElementById("mobileMenu");
-
-      hamburger.addEventListener("click", () => {
-        hamburger.classList.toggle("open");
-        mobileMenu.classList.toggle("open");
-      });
-
-      mobileMenu.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          hamburger.classList.remove("open");
-          mobileMenu.classList.remove("open");
-        });
-      });
-    </script>
+    <!-- /main-wrapper -->
+ {% include 'includes/footer.html' %}
+    <script src="{% static 'js/dashboard_aesm.js' %}"></script>
   </body>
 </html>
